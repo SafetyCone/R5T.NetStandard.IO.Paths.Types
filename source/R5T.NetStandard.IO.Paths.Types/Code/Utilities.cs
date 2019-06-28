@@ -370,14 +370,25 @@ namespace R5T.NetStandard.IO.Paths
             return fileNameSegment;
         }
 
-        public static string GetRelativePath(string fromPath, string toPath)
+        public static string GetRelativePathUsingUriMakeRelativeUri(string fromPath, string toPath)
         {
-            var fromUri = new Uri(fromPath);
-            var toUri = new Uri(toPath);
+            var fromUri = new Uri(new Uri("file://"), fromPath);
+            var toUri = new Uri(new Uri("file://"), toPath);
 
             var relativeUri = fromUri.MakeRelativeUri(toUri);
 
             var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+            return relativePath;
+        }
+
+        public static string GetRelativePathCustomLogic(string fromPath, string toPath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static string GetRelativePath(string fromPath, string toPath)
+        {
+            var relativePath = Utilities.GetRelativePathUsingUriMakeRelativeUri(fromPath, toPath);
             return relativePath;
         }
 

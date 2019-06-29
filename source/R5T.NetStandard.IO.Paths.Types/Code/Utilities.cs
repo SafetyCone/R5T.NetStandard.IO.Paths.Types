@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
+using R5T.NetStandard;
 using R5T.NetStandard.IO.Paths.Extensions;
 
 
@@ -280,22 +281,29 @@ namespace R5T.NetStandard.IO.Paths
 
         #region Separators
 
-        public static string DetectDirectorySeparator(string path)
-        {
-            var containsWindows = path.Contains(Constants.DefaultWindowsDirectorySeparator);
-            if (containsWindows)
-            {
-                return Constants.DefaultWindowsDirectorySeparator;
-            }
+        ///// <summary>
+        ///// Finds the first instance of a directory separator (whether Windows or non-Windows).
+        ///// A path might have both Windows and non-Windows directory separators. But whichever occurs first in the path is more dominant (closer to the root), so that is the path's directory separator.
+        ///// </summary>
+        //public static string DetectDirectorySeparator(string path)
+        //{
+        //    var indexOfWindows = path.IndexOf(Constants.DefaultWindowsDirectorySeparator);
+        //    var indexOfNonWindows = path.IndexOf(Constants.DefaultNonWindowsDirectorySeparator);
 
-            var containsNonWindows = path.Contains(Constants.DefaultNonWindowsDirectorySeparator);
-            if (containsNonWindows)
-            {
-                return Constants.DefaultNonWindowsDirectorySeparator;
-            }
+        //    var containsWindows = path.Contains();
+        //    if (containsWindows)
+        //    {
+        //        return Constants.DefaultWindowsDirectorySeparator;
+        //    }
 
-            throw new Exception($@"Unable to detect platform for path '{path}'.");
-        }
+        //    var containsNonWindows = path.Contains(Constants.DefaultNonWindowsDirectorySeparator);
+        //    if (containsNonWindows)
+        //    {
+        //        return Constants.DefaultNonWindowsDirectorySeparator;
+        //    }
+
+        //    throw new Exception($@"Unable to detect platform for path '{path}'.");
+        //}
 
         /// <summary>
         /// Between the Windows ('\\') and the non-Windows ('/') directory separator, given one, return the other.
@@ -346,28 +354,33 @@ namespace R5T.NetStandard.IO.Paths
 
         #region Strongly-Typed Separators
 
-        public static DirectorySeparator DetectDirectorySeparator(PathSegment pathSegment)
-        {
-            var directorySeparatorValue = Utilities.DetectDirectorySeparator(pathSegment.Value);
+        //public static DirectorySeparator DetectDirectorySeparator(PathSegment pathSegment)
+        //{
+        //    var directorySeparatorValue = Utilities.DetectDirectorySeparator(pathSegment.Value);
 
-            if(directorySeparatorValue == DirectorySeparator.DefaultNonWindows.Value)
-            {
-                return DirectorySeparator.DefaultNonWindows;
-            }
-            else
-            {
-                return DirectorySeparator.DefaultWindows;
-            }
-        }
+        //    if(directorySeparatorValue == DirectorySeparator.DefaultNonWindows.Value)
+        //    {
+        //        return DirectorySeparator.DefaultNonWindows;
+        //    }
+        //    else
+        //    {
+        //        return DirectorySeparator.DefaultWindows;
+        //    }
+        //}
 
         #endregion
 
         #region Paths as Strings
 
-        public static string CombineFileName(string fileNameSegment1, string fileNameSegment2)
+        /// <summary>
+        /// A path is directory indicated if it ends with a directory separator.
+        /// </summary>
+        public static bool IsPathDirectoryIndicated(string path)
         {
-            var fileNameSegment = $"{fileNameSegment1}{Constants.DefaultFileNameSegmentSeparator}{fileNameSegment2}";
-            return fileNameSegment;
+            var lastChar = path.Last();
+
+            var lastCharIsDirectorySeparator = DirectorySeparator.IsDirectorySeparator(lastChar);
+            return lastCharIsDirectorySeparator;
         }
 
         /// <summary>
@@ -375,8 +388,7 @@ namespace R5T.NetStandard.IO.Paths
         /// </summary>
         public static string EnsureFilePathNotDirectoryIndicated(string filePath)
         {
-            var lastChar = filePath.Last();
-            var lastCharIsDirectorySeparator = DirectorySeparator.IsDirectorySeparator(lastChar);
+            var lastCharIsDirectorySeparator = Utilities.IsPathDirectoryIndicated(filePath);
             if (lastCharIsDirectorySeparator)
             {
                 var output = filePath.Substring(0, filePath.Length - 1);
@@ -385,6 +397,17 @@ namespace R5T.NetStandard.IO.Paths
 
             return filePath;
         }
+
+        //public static string EnsureDirectoryPathIsDirectoryIndicated(string directoryPath)
+        //{
+        //    var lastCharIsDirectorySeparator = Utilities.IsPathDirectoryIndicated(directoryPath);
+        //    if(!lastCharIsDirectorySeparator)
+        //    {
+        //        var directorySeparator = Utilities.DetectDirectorySeparator(directoryPath);
+
+        //        var output = directoryPath + directorySeparator;
+        //    }
+        //}
 
         public static string GetRelativePathUsingUriMakeRelativeUri(string fromPath, string toPath)
         {
@@ -420,16 +443,16 @@ namespace R5T.NetStandard.IO.Paths
             return unresolvedFilePath;
         }
 
-        /// <summary>
-        /// Detects the directory separator using the from path.
-        /// </summary>
-        public static string GetUnresolvedPath(string fromPath, string relativePath)
-        {
-            var directorySeparator = Utilities.DetectDirectorySeparator(fromPath);
+        ///// <summary>
+        ///// Detects the directory separator using the from path.
+        ///// </summary>
+        //public static string GetUnresolvedPath(string fromPath, string relativePath)
+        //{
+        //    var directorySeparator = Utilities.DetectDirectorySeparator(fromPath);
 
-            var unresolvedPath = Utilities.GetUnresolvedPath(fromPath, relativePath, directorySeparator);
-            return unresolvedPath;
-        }
+        //    var unresolvedPath = Utilities.GetUnresolvedPath(fromPath, relativePath, directorySeparator);
+        //    return unresolvedPath;
+        //}
 
         public static string ResolvePathUsingUriLocalPath(string unresolvedPath)
         {
@@ -568,24 +591,6 @@ namespace R5T.NetStandard.IO.Paths
         }
 
         /// <summary>
-        /// Creates a file-name from a file-name without extension, file-extension, using the specified file-extension separator.
-        /// </summary>
-        public static string GetFileName(string fileNameWithoutExtension, string fileExtension, string fileExtensionSeparator)
-        {
-            var fileName = $"{fileNameWithoutExtension}{fileExtensionSeparator}{fileExtension}";
-            return fileName;
-        }
-
-        /// <summary>
-        /// Creates a file-name from a file-name without extension, file-extension, using the <see cref="FileExtensionSeparator.Default"/> file-extension separator.
-        /// </summary>
-        public static string GetFileName(string fileNameWithoutExtension, string fileExtension)
-        {
-            var fileName = Utilities.GetFileName(fileNameWithoutExtension, fileExtension, FileExtensionSeparator.Default.Value);
-            return fileName;
-        }
-
-        /// <summary>
         /// Gets the file-name portion of the provided file-path.
         /// </summary>
         public static string GetFileName(string filePath)
@@ -695,7 +700,23 @@ namespace R5T.NetStandard.IO.Paths
 
         #endregion
 
-        #region Directory-Name
+        #region Directory-Name Strings
+
+        public static string CombineDirectoryName(string directoryNameSegment1, string directoryNameSegment2, string directoryNameSegmentSeparator)
+        {
+            var directoryNameSegment = $"{directoryNameSegment1}{directoryNameSegmentSeparator}{directoryNameSegment2}";
+            return directoryNameSegment;
+        }
+
+        public static string CombineDirectoryName(string directoryNameSegment1, string directoryNameSegment2)
+        {
+            var directoryNameSegment = Utilities.CombineDirectoryName(directoryNameSegment1, directoryNameSegment2, Constants.DefaultDirectoryNameSegmentSeparator);
+            return directoryNameSegment;
+        }
+
+        #endregion
+
+        #region Strongly-Typed Directory-Name
 
         /// <summary>
         /// Combines multiple <see cref="DirectoryNameSegment"/>s into a single <see cref="GeneralDirectoryNameSegment"/>.
@@ -732,7 +753,41 @@ namespace R5T.NetStandard.IO.Paths
 
         #endregion
 
-        #region File-Name
+        #region File-Name Strings
+
+        public static string CombineFileName(string fileNameSegment1, string fileNameSegment2, string fileNameSegmentSeparator)
+        {
+            var fileNameSegment = $"{fileNameSegment1}{fileNameSegmentSeparator}{fileNameSegment2}";
+            return fileNameSegment;
+        }
+
+        public static string CombineFileName(string fileNameSegment1, string fileNameSegment2)
+        {
+            var fileNameSegment = Utilities.CombineFileName(fileNameSegment1, fileNameSegment2, Constants.DefaultFileNameSegmentSeparator);
+            return fileNameSegment;
+        }
+
+        /// <summary>
+        /// Creates a file-name from a file-name without extension, file-extension, using the specified file-extension separator.
+        /// </summary>
+        public static string GetFileName(string fileNameWithoutExtension, string fileExtension, string fileExtensionSeparator)
+        {
+            var fileName = Utilities.CombineFileName(fileNameWithoutExtension, fileExtension, fileExtensionSeparator);
+            return fileName;
+        }
+
+        /// <summary>
+        /// Creates a file-name from a file-name without extension, file-extension, using the <see cref="FileExtensionSeparator.Default"/> file-extension separator.
+        /// </summary>
+        public static string GetFileName(string fileNameWithoutExtension, string fileExtension)
+        {
+            var fileName = Utilities.GetFileName(fileNameWithoutExtension, fileExtension, FileExtensionSeparator.Default.Value);
+            return fileName;
+        }
+
+        #endregion
+
+        #region Strongly-Typed File-Name
 
         /// <summary>
         /// Combines multiple <see cref="FileNameSegment"/>s into a single <see cref="GeneralFileNameSegment"/>.

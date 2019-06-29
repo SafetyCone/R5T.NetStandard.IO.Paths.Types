@@ -19,8 +19,14 @@ namespace R5T.NetStandard.IO.Paths
         /// </summary>
         public static readonly DirectorySeparator DefaultNonWindows = new DirectorySeparator(Constants.DefaultNonWindowsDirectorySeparator);
 
-        #endregion
 
+        public static bool IsDirectorySeparator(char character)
+        {
+            var isDirectorySeparator = character == Constants.DefaultWindowsDirectorySeparatorChar || character == Constants.DefaultNonWindowsDirectorySeparatorChar;
+            return isDirectorySeparator;
+        }
+
+        #endregion
 
 
         public DirectorySeparator(string value)

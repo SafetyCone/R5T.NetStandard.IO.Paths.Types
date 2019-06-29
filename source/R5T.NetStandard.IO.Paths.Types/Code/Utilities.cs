@@ -370,6 +370,22 @@ namespace R5T.NetStandard.IO.Paths
             return fileNameSegment;
         }
 
+        /// <summary>
+        /// File paths never end in a directory separator.
+        /// </summary>
+        public static string EnsureFilePathNotDirectoryIndicated(string filePath)
+        {
+            var lastChar = filePath.Last();
+            var lastCharIsDirectorySeparator = DirectorySeparator.IsDirectorySeparator(lastChar);
+            if (lastCharIsDirectorySeparator)
+            {
+                var output = filePath.Substring(0, filePath.Length - 1);
+                return output;
+            }
+
+            return filePath;
+        }
+
         public static string GetRelativePathUsingUriMakeRelativeUri(string fromPath, string toPath)
         {
             var fromUri = new Uri(new Uri("file://"), fromPath);
@@ -392,10 +408,30 @@ namespace R5T.NetStandard.IO.Paths
             return relativePath;
         }
 
+        public static string GetUnresolvedPath(string fromPath, string relativePath, string directorySeparator)
+        {
+            var ensuredFromPath = Utilities.EnsureDirectorySeparator(fromPath, directorySeparator);
+            var ensuredRelativePath = Utilities.EnsureDirectorySeparator(relativePath, directorySeparator);
+
+            // Treat the source path as a file path by removing any ending directory separator (in case the source path is an indicated directory path).
+            var ensuredFromPathAsFilePath = Utilities.EnsureFilePathNotDirectoryIndicated(fromPath);
+
+            var unresolvedFilePath = Utilities.CombineSimple(ensuredFromPathAsFilePath, ensuredRelativePath, directorySeparator);
+            return unresolvedFilePath;
+        }
+
         /// <summary>
-        /// Given an unresolved path (ex: "C:\Temp1\Temp2\..\Temp3\Temp4.txt"), get a resolved path (ex: "C:\Temp1\Temp3\Temp4.txt").
+        /// Detects the directory separator using the from path.
         /// </summary>
-        public static string ResolvePath(string unresolvedPath)
+        public static string GetUnresolvedPath(string fromPath, string relativePath)
+        {
+            var directorySeparator = Utilities.DetectDirectorySeparator(fromPath);
+
+            var unresolvedPath = Utilities.GetUnresolvedPath(fromPath, relativePath, directorySeparator);
+            return unresolvedPath;
+        }
+
+        public static string ResolvePathUsingUriLocalPath(string unresolvedPath)
         {
             try
             {
@@ -409,6 +445,53 @@ namespace R5T.NetStandard.IO.Paths
                 var message = $"Failed to resolve path: {unresolvedPath}";
                 throw new ArgumentException(message, nameof(unresolvedPath), uriFormatException);
             }
+        }
+
+        public static string ResolvePathUsingCustomLogic(string unresolvedPath)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Given an unresolved path (ex: "C:\Temp1\Temp2\..\Temp3\Temp4.txt"), get a resolved path (ex: "C:\Temp1\Temp3\Temp4.txt").
+        /// </summary>
+        public static string ResolvePath(string unresolvedPath)
+        {
+            var resolvedPath = Utilities.ResolvePathUsingUriLocalPath(unresolvedPath);
+            return resolvedPath;
+        }
+
+        public static string ResolveFilePathUsingUriLocalPath(string unresolvedFilePath)
+        {
+            var resolvedFilePath = Utilities.ResolvePathUsingUriLocalPath(unresolvedFilePath);
+
+            var actualResolvedFilePath = Utilities.EnsureFilePathNotDirectoryIndicated(resolvedFilePath);
+            return actualResolvedFilePath;
+        }
+
+        /// <summary>
+        /// If the unresolved path is known to be the path of a file, ensure 
+        /// </summary>
+        public static string ResolveFilePath(string unresolvedFilePath)
+        {
+            var resolvedFilePath = Utilities.ResolveFilePathUsingUriLocalPath(unresolvedFilePath);
+            return resolvedFilePath;
+        }
+
+        public static string ResolveDirectoryPath(string unresolvedDirectoryPath)
+        {
+            var resolvedDirectoryPath = Utilities.ResolvePath(unresolvedDirectoryPath);
+            return resolvedDirectoryPath;
+        }
+
+        /// <summary>
+        /// Simply combines two paths using the specified directory.
+        /// Returns path1{directorySeparator}path2.
+        /// </summary>
+        public static string CombineSimple(string path1, string path2, string directorySeparator)
+        {
+            var output = $"{path1}{directorySeparator}{path2}";
+            return output;
         }
 
         /// <summary>

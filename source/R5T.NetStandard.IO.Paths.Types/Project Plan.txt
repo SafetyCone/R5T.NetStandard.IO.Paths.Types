@@ -2,3 +2,19 @@ R5T.NetStandard.IO.Paths.Types - A base types library for the R5T.NetStandard.IO
 
 Goals
 
+* Compute relative paths.
+
+
+Relative Paths
+
+What is a relative path? A relative path is a path that can be prefixed with a directory separator, then appended to a source absolute path, and when resolved, will yield a destination absolute path. More simply:
+
+	absolution destination path = resolve(absolute source path + (directory separator + relative path))
+
+What is the relative path from a path to the same path? This is just the empty string. Adding a directory separator and the empty string to a path resolves to the same path, for both files and directories.
+
+Note that a directory IS a file! However, note that directory paths can be indicated (i.e. end in a directory separator) or not. However, file paths never end in a directory separator.
+
+Preserving the directory indicator is a necessity, as many libaries make assumptions about paths that require specific path values to end in a directory separator.
+
+Thus, there is really only one path combination operation: joining file paths (no ending directory separator)

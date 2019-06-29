@@ -17,4 +17,10 @@ Note that a directory IS a file! However, note that directory paths can be indic
 
 Preserving the directory indicator is a necessity, as many libaries make assumptions about paths that require specific path values to end in a directory separator.
 
-Thus, there is really only one path combination operation: joining file paths (no ending directory separator)
+Thus, there is really only one path combination operation: joining a file path (no ending directory separator) to a non-rooted (no initial directory separator) path.
+
+Directory path are (internally) always indicated.
+Rooted paths are (internally) always indicated.
+
+* A path is directory-indicated if it ends with a directory separator.
+* A path is root-indicated if it begins with a directory separator (or a volume then a volume separator, then a directory separator).

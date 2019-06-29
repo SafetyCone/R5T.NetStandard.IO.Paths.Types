@@ -13,6 +13,9 @@ namespace R5T.NetStandard.IO.Paths
         public static readonly string DefaultPathSeparator = Constants.DefaultPathSeparatorChar.ToString();
 
 
+        /// <summary>
+        /// This is a colon (:) on Windows and Mac, and a slash on *NIX operating systems.
+        /// </summary>
         public static readonly char DefaultVolumeSeparatorChar = Path.VolumeSeparatorChar; // ':' as in "C:\..."
         /// <summary>
         /// Separates the volume (drive) from the rest of the path. For example, the ':' in C:\... on Windows.

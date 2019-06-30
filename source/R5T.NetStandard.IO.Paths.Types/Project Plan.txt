@@ -2,7 +2,22 @@ R5T.NetStandard.IO.Paths.Types - A base types library for the R5T.NetStandard.IO
 
 Goals
 
+* Comment on 
 * Compute relative paths.
+
+
+Directory-Indicated and Root-Indicated
+
+* A path is directory-indicated if it ends with a directory separator.
+* A path is root-indicated if it begins with a directory separator (or a volume then a volume separator, then a directory separator).
+
+
+The manipulation of paths as strings is built on two invariants of all paths:
+
+* A directory path will always be directory-indicated (end with a directory separator).
+* An absolute (or rooted) path will always be root-indicated (begin with a directory separator, or a volume, volume separator, then directory separator).
+
+
 
 
 Relative Paths

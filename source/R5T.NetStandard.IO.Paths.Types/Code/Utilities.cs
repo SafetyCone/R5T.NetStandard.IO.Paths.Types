@@ -2,8 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
-using R5T.NetStandard;
 using R5T.NetStandard.IO.Paths.Extensions;
 
 
@@ -281,29 +281,46 @@ namespace R5T.NetStandard.IO.Paths
 
         #region Separators
 
-        ///// <summary>
-        ///// Finds the first instance of a directory separator (whether Windows or non-Windows).
-        ///// A path might have both Windows and non-Windows directory separators. But whichever occurs first in the path is more dominant (closer to the root), so that is the path's directory separator.
-        ///// </summary>
-        //public static string DetectDirectorySeparator(string path)
-        //{
-        //    var indexOfWindows = path.IndexOf(Constants.DefaultWindowsDirectorySeparator);
-        //    var indexOfNonWindows = path.IndexOf(Constants.DefaultNonWindowsDirectorySeparator);
+        /// <summary>
+        /// Finds the first instance of a directory separator (whether Windows or non-Windows).
+        /// A path might have both Windows and non-Windows directory separators. But whichever occurs first in the path is more dominant (closer to the root), so that is the path's directory separator.
+        /// </summary>
+        public static string DetectDirectorySeparator(string path)
+        {
+            var indexOfWindows = path.IndexOf(Constants.DefaultWindowsDirectorySeparator);
+            var indexOfNonWindows = path.IndexOf(Constants.DefaultNonWindowsDirectorySeparator);
 
-        //    var containsWindows = path.Contains();
-        //    if (containsWindows)
-        //    {
-        //        return Constants.DefaultWindowsDirectorySeparator;
-        //    }
+            if(!StringHelper.IsFound(indexOfWindows) && !StringHelper.IsFound(indexOfNonWindows))
+            {
+                throw new Exception($@"Unable to detect platform for path '{path}'.");
+            }
 
-        //    var containsNonWindows = path.Contains(Constants.DefaultNonWindowsDirectorySeparator);
-        //    if (containsNonWindows)
-        //    {
-        //        return Constants.DefaultNonWindowsDirectorySeparator;
-        //    }
+            var windowsBeforeNonWindows = indexOfWindows < indexOfNonWindows; // There will never be an equals case, since two different characters cannot have the same index in a string. At least until quantum computing arrives!
+            if(windowsBeforeNonWindows)
+            {
+                return Constants.DefaultWindowsDirectorySeparator;
+            }
+            else
+            {
+                return Constants.DefaultNonWindowsDirectorySeparator;
+            }
+        }
 
-        //    throw new Exception($@"Unable to detect platform for path '{path}'.");
-        //}
+        public static bool WindowsDirectorySeparatorDetected(string path)
+        {
+            var directorySeparator = Utilities.DetectDirectorySeparator(path);
+
+            var output = directorySeparator == Constants.DefaultWindowsDirectorySeparator;
+            return output;
+        }
+
+        public static bool NonWindowsDirectorySeparatorDetected(string path)
+        {
+            var directorySeparator = Utilities.DetectDirectorySeparator(path);
+
+            var output = directorySeparator == Constants.DefaultNonWindowsDirectorySeparator;
+            return output;
+        }
 
         /// <summary>
         /// Between the Windows ('\\') and the non-Windows ('/') directory separator, given one, return the other.
@@ -373,7 +390,27 @@ namespace R5T.NetStandard.IO.Paths
         #region Paths as Strings
 
         /// <summary>
-        /// A path is directory indicated if it ends with a directory separator.
+        /// If a Windows directory separator is detected in the path (see <see cref="Utilities.WindowsDirectorySeparatorDetected(string)"/>), then it is a Windows path.
+        /// Basically, if a path uses the Windows directory separator, or uses the Windows directory separator before it uses the non-Windows directory separator, then it is a Windows path.
+        /// </summary>
+        public static bool IsWindowsPath(string path)
+        {
+            var output = Utilities.WindowsDirectorySeparatorDetected(path);
+            return output;
+        }
+
+        /// <summary>
+        /// If a non-Windows directory separator is detected in the path (see <see cref="Utilities.NonWindowsDirectorySeparatorDetected(string)"/>), then it is a non-Windows path.
+        /// Basically, if a path uses the non-Windows directory separator, or uses the non-Windows directory separator before it uses the Windows directory separator, then it is a non-Windows path.
+        /// </summary>
+        public static bool IsNonWindowsPath(string path)
+        {
+            var output = Utilities.NonWindowsDirectorySeparatorDetected(path);
+            return output;
+        }
+
+        /// <summary>
+        /// Determines if a a path is directory indicated (if it ends with a directory separator).
         /// </summary>
         public static bool IsPathDirectoryIndicated(string path)
         {
@@ -384,6 +421,26 @@ namespace R5T.NetStandard.IO.Paths
         }
 
         /// <summary>
+        /// If a path is not directory-indicated (ends with a directory separator), then it is possibly a file path.
+        /// NOTE! This is only true if the caller has taken steps to ensure it is true! A directory path may NOT end in a directory separator. At the string-level how can a file path string be differentiated from a directory-path string? Directories ARE files!
+        /// </summary>
+        public static bool IsFilePath(string path)
+        {
+            var isFilePath = !Utilities.IsPathDirectoryIndicated(path);
+            return isFilePath;
+        }
+
+        /// <summary>
+        /// If a path is directory-indicated (ends with a directory separator), then is it possibly a directory path.
+        /// NOTE! This is only true if the caller has taken steps to ensure it is true! A directory path may NOT end in a directory separator. At the string-level how can a file path string be differentiated from a directory-path string? Directories ARE files!
+        /// </summary>
+        public static bool IsDirectoryPath(string path)
+        {
+            var isFilePath = Utilities.IsPathDirectoryIndicated(path);
+            return isFilePath;
+        }
+
+        /// <summary>
         /// File paths never end in a directory separator.
         /// </summary>
         public static string EnsureFilePathNotDirectoryIndicated(string filePath)
@@ -391,30 +448,87 @@ namespace R5T.NetStandard.IO.Paths
             var lastCharIsDirectorySeparator = Utilities.IsPathDirectoryIndicated(filePath);
             if (lastCharIsDirectorySeparator)
             {
-                var output = filePath.Substring(0, filePath.Length - 1);
+                var output = filePath.ExceptLast();
                 return output;
             }
 
             return filePath;
         }
 
-        //public static string EnsureDirectoryPathIsDirectoryIndicated(string directoryPath)
-        //{
-        //    var lastCharIsDirectorySeparator = Utilities.IsPathDirectoryIndicated(directoryPath);
-        //    if(!lastCharIsDirectorySeparator)
-        //    {
-        //        var directorySeparator = Utilities.DetectDirectorySeparator(directoryPath);
-
-        //        var output = directoryPath + directorySeparator;
-        //    }
-        //}
-
-        public static string GetRelativePathUsingUriMakeRelativeUri(string fromPath, string toPath)
+        public static string EnsureDirectoryPathIsDirectoryIndicated(string directoryPath)
         {
-            var fromUri = new Uri(new Uri("file://"), fromPath);
-            var toUri = new Uri(new Uri("file://"), toPath);
+            var lastCharIsDirectorySeparator = Utilities.IsPathDirectoryIndicated(directoryPath);
+            if (!lastCharIsDirectorySeparator)
+            {
+                var directorySeparator = Utilities.DetectDirectorySeparator(directoryPath);
 
-            var relativeUri = fromUri.MakeRelativeUri(toUri);
+                var output = directoryPath.Append(directorySeparator);
+                return output;
+            }
+
+            return directoryPath;
+        }
+
+        public static bool IsPathRootIndicated(string path)
+        {
+            var pathBeginsWithRooting = Regex.IsMatch(path, Constants.RootIndicatedPathRegexPattern);
+            return pathBeginsWithRooting;
+        }
+
+        public static string EnsureRootedPathIsRootIndicated(string path)
+        {
+            var isPathRootIndicated = Utilities.IsPathRootIndicated(path);
+            if(!isPathRootIndicated)
+            {
+                var directorySeparator = Utilities.DetectDirectorySeparator(path);
+
+                var output = path.Prefix(directorySeparator);
+                return output;
+            }
+
+            return path;
+        }
+
+        public static string EnsureRelativePathIsNotRootIndicated(string path)
+        {
+            var isPathRootIndicated = Utilities.IsPathRootIndicated(path);
+            if(isPathRootIndicated)
+            {
+                var directorySeparator = Utilities.DetectDirectorySeparator(path);
+
+                var indexOfFirstDirectorySeparator = path.IndexOf(directorySeparator); // Note, will be found, else directory separator would not have been detected.
+
+                var output = path.Substring(indexOfFirstDirectorySeparator + 1); // Everything after the first directory separator.
+                return output;
+            }
+
+            return path;
+        }
+
+        /// <summary>
+        /// If a path is root-indicated (see <see cref="Utilities.IsPathRootIndicated(string)"/>, then it is an absolute path.
+        /// </summary>
+        public static bool IsAbsolutePath(string path)
+        {
+            var output = Utilities.IsPathRootIndicated(path);
+            return output;
+        }
+
+        /// <summary>
+        /// If a path is not root-indicated (see <see cref="Utilities.IsPathRootIndicated(string)"/>, then it is a relative path.
+        /// </summary>
+        public static bool IsRelativePath(string path)
+        {
+            var output = !Utilities.IsPathRootIndicated(path);
+            return output;
+        }
+
+        public static string GetRelativePathUsingUriMakeRelativeUri(string sourcePath, string destinationPath)
+        {
+            var sourceUri = new Uri(new Uri("file://"), sourcePath);
+            var destinationUri = new Uri(new Uri("file://"), destinationPath);
+
+            var relativeUri = sourceUri.MakeRelativeUri(destinationUri);
 
             var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
             return relativePath;

@@ -67,5 +67,8 @@ namespace R5T.NetStandard.IO.Paths
         /// Separates file-name segments.
         /// </summary>
         public static readonly string DefaultFileNameSegmentSeparator = Constants.DefaultFileNameSegmentSeparatorChar.ToString();
+
+        // Begins with the Windows directory separator, or the non-Windows directory separator, or a volume name, the volume separator, and the Windows directory separator (because only Windows paths use the volume).
+        public static readonly string RootIndicatedPathRegexPattern = $@"^\{Constants.DefaultWindowsDirectorySeparator}|^{Constants.DefaultNonWindowsDirectorySeparator}|^.*{Constants.DefaultVolumeSeparator}\{Constants.DefaultWindowsDirectorySeparator}";
     }
 }

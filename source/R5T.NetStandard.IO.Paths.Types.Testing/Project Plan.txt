@@ -1,0 +1,12 @@
+﻿R5T.NetStandard.IO.Paths.Types.Testing - A test project for the R5T.NetStandard.IO.Paths.Types library.
+
+Tested Functionality
+
+Paths as Strings:
+
+	* Windows/Non-Windows directory separator detected.
+	* Is Windows/Non-Windows path?
+	* Is path directory indicated?
+	* Is file/directory path (specifically showing true in the case of un-directory indicated directory path).
+	* Is path root indicated?
+	* Is path absolute/relative?

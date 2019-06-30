@@ -27,14 +27,22 @@ namespace R5T.NetStandard.IO.Paths.Types.Testing
 
         #region Test Methods
 
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        //[TestMethod]
-        //public void WindowsFileToFileSameDirectoryRelativePath()
-        //{
+        /// <summary>
+        /// What is the relative path from a file to a file in the same directory? It should be "..\File2".
+        /// However, the Uri.MakeRelativeUri()-based relative path computation erroneously says "File2". This is erroneous because the Uri.LocalPath-based path resolution says the relative path "..\File2" does in fact resolve the to destination file.
+        /// So, by the definition of relative paths, MakeRelativeUri() is wrong!
+        /// </summary>
+        [TestMethod]
+        public void WindowsFileToFileSameDirectoryRelativePath()
+        {
+            var sourceFilePath = PathValues.WindowsFilePath1;
+            var destinationFilePath = PathValues.WindowsFilePath2;
+            var expected = RelativePathValues.WindowsFilePath1ToWindowsFilePath2;
 
-        //}
+            var relativePath = this.RelativePathProvider.GetRelativePath(sourceFilePath, destinationFilePath);
+
+            Assert.AreEqual(expected, relativePath);
+        }
 
         /// <summary>
         /// What is the relative path between two identical non-Windows file paths?

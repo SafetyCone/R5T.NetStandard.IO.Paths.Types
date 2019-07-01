@@ -2,7 +2,7 @@ R5T.NetStandard.IO.Paths.Types - A base types library for the R5T.NetStandard.IO
 
 Goals
 
-* Comment on 
+* Comment on System.IO.Path functionality.
 * Compute relative paths.
 
 
@@ -11,13 +11,34 @@ Directory-Indicated and Root-Indicated
 * A path is directory-indicated if it ends with a directory separator.
 * A path is root-indicated if it begins with a directory separator (or a volume then a volume separator, then a directory separator).
 
-
 The manipulation of paths as strings is built on two invariants of all paths:
 
 * A directory path will always be directory-indicated (end with a directory separator).
 * An absolute (or rooted) path will always be root-indicated (begin with a directory separator, or a volume, volume separator, then directory separator).
 
 
+String Path Types
+
+While there is no way to explicitly type a string (that is the reason for creating strongly-typed path types), string paths can be thought of as:
+
+* Windows or Non-Windows.
+* File or Directory.
+* Absolute or Relative.
+
+
+Windows or Non-Windows
+
+Determining if a string path is a Windows or non-Windows path is a simple matter of determining if the path contains a Windows or non-Windows directory separator.
+
+But what if a path is a "mixed" path (contains BOTH Windows and non-Windows directory separators)? This can result from combining a Windows absolute path and a non-Windows relative path, or vice-versa. In this case whichever directory separator comes first "dominates" the path (is closer to the root). Whichever directory separator dominates a mixed path determines with the path is a Windows or non-Windows path.
+
+And what if a path has not directory separators? This is the case for relative paths of direct children, which is either just the file or directory name (if the directory name, as is usual, is not directory-indicated). In this case assumed and strict methods are provided. Assumed methods assume the directory separator being tested for, e.g. IsWindowsPath() will assume that a path without any directory separators is a Windows path, and return true. The IsWindowsPathStrict() method will return false since there is no directory separator available to strictly determine.
+
+
+File or Directory
+
+
+At the string-level of abstraction, directory paths can be indicated (end with a directory separator) or unindicated. The default is an indicated path, there there are directory paths and unindcated directory paths.
 
 
 Relative Paths
@@ -26,7 +47,38 @@ What is a relative path? A relative path is a path that can be prefixed with a d
 
 	absolution destination path = resolve(absolute source path + (directory separator + relative path))
 
+At the string level of abstraction, there is no way to distinguish between a file path and an un-indicated directory path. Thus at the string level, five GetRelativePath() methods are provided:
+
+	* GetRelativePath() - Assumes that input paths have been directory-indicated if they are directories, and are file paths otherwise.
+	* GetRelativePathFileToFile() - Allows specifying that source and destination paths are file paths.
+	* GetRelativePathFileToDirectory() - Allows specifying a source file path and destination directory path.
+	* GetRelativePathDirectoryToFile() - Allows specifying a source directory path and destination file path.
+	* GetRelativePathDirectoryToDirectory() - Allows specifying that source and destination paths are directory paths.
+
+
+Relative Path Special Cases
+
 What is the relative path from a path to the same path? This is just the empty string. Adding a directory separator and the empty string to a path resolves to the same path, for both files and directories.
+
+It's very easy to determine the relative path to a file or directory in a directory, it's just the file or directory name.
+
+
+Uri.MakeRelativeUri()
+
+The Stack-Overflow suggested way to get a relative file path between two paths is to use the Uri class. This method generally works, but has some specific behaviors that differ from how file and directory paths are handled:
+
+* Unless a directory path is directory-indicated, the Uri method assumes the directory path is a file path.
+* The Uri method generates paths relative to the most-derived directory path in the source path. For a file path, this is the path of the directory containing the file.
+* The Uri method, given a Windows path (using the the Windows directory separator), always returns a non-Windows path (using the non-Windows directory separator).
+* The Uri method gives directory-indicated relative directory paths (which always end with the non-Windows directory separator).
+
+These differences lead to failures on certain basic edge cases:
+
+* Relative path from a file in a directory to another file in the same directory. Ex: "C:\Directory1\File1.txt -> C:\Directory1\File2.txt => "..\File2.txt". However, the Uri provides "File2.txt".
+* Relative path from a directory to a file or directory within the directory. Ex: "C:\Directory1" -> "C:\Directory1\File1.txt" => "File1.txt". However, the Uri provides "Directory1\File1.txt". This is because the source directory path is not directory-indicated. If it is indicated, the correct answer results:  Ex: "C:\Directory1\" -> "C:\Directory1\File1.txt" => "File1.txt".
+
+
+
 
 Note that a directory IS a file! However, note that directory paths can be indicated (i.e. end in a directory separator) or not. However, file paths never end in a directory separator.
 
@@ -39,3 +91,25 @@ Rooted paths are (internally) always indicated.
 
 * A path is directory-indicated if it ends with a directory separator.
 * A path is root-indicated if it begins with a directory separator (or a volume then a volume separator, then a directory separator).
+
+
+Is() and Ensure()
+
+A pair of Is() and Ensure() methods acts as a fundamental unit. The Is() method tests for some property, and Ensure() will, if needed, modify an input so that it's paired Is() method returns true.
+
+Note that Ensure() methods cannot be created for operations that cannot be ensured! For example, ensuring that a path is strictly a Windows path cannot be done, since a relative file path that is just the file name cannot be ensured at the string level of abstraction.
+
+
+Glossary
+
+* Absolute.
+* Assumed method.
+* Directory-Indicated.
+* Domination of path.
+* Ensure.
+* Is.
+* Mixed.
+* Relative.
+* Root-Indicated.
+* Rooted.
+* Strict method.

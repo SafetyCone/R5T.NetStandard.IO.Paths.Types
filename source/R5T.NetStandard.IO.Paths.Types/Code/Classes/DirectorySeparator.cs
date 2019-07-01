@@ -8,6 +8,9 @@ namespace R5T.NetStandard.IO.Paths
     /// </summary>
     public class DirectorySeparator : TypedString
     {
+        public const string InvalidDirectorySeparatorValue = null;
+
+
         #region Static
 
         /// <summary>
@@ -24,6 +27,12 @@ namespace R5T.NetStandard.IO.Paths
         {
             var isDirectorySeparator = character == Constants.DefaultWindowsDirectorySeparatorChar || character == Constants.DefaultNonWindowsDirectorySeparatorChar;
             return isDirectorySeparator;
+        }
+
+        public static bool IsValid(string directorySeparator)
+        {
+            var output = directorySeparator != DirectorySeparator.InvalidDirectorySeparatorValue;
+            return output;
         }
 
         #endregion

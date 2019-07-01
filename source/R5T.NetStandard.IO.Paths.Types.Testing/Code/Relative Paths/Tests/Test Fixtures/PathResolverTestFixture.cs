@@ -46,7 +46,7 @@ namespace R5T.NetStandard.IO.Paths.Types.Testing
         [TestMethod]
         public void WindowsIndicatedDirectoryPathToFileInTwiceDerivedDirectory()
         {
-            var sourceFilePath = PathValues.WindowsDirectoryPath1Indicated;
+            var sourceFilePath = PathValues.WindowsDirectoryPath1;
             var relativeFilePath = RelativePathValues.WindowsDirectoryPath1ToWindowsFilePath1;
             var expected = PathValues.WindowsFilePath1;
 
@@ -58,7 +58,7 @@ namespace R5T.NetStandard.IO.Paths.Types.Testing
         [TestMethod]
         public void NonWindowsDirectoryPathToFileInTwiceDerivedDirectory()
         {
-            var sourceFilePath = PathValues.NonWindowsDirectoryPath1;
+            var sourceFilePath = PathValues.NonWindowsDirectoryPath1Unindicated;
             var relativeFilePath = RelativePathValues.NonWindowsDirectoryPath1ToNonWindowsFilePath1;
             var expected = PathValues.NonWindowsFilePath1;
 
@@ -70,7 +70,7 @@ namespace R5T.NetStandard.IO.Paths.Types.Testing
         [TestMethod]
         public void WindowsDirectoryPathToFileInTwiceDerivedDirectory()
         {
-            var sourceFilePath = PathValues.WindowsDirectoryPath1;
+            var sourceFilePath = PathValues.WindowsDirectoryPath1Unindicated;
             var relativeFilePath = RelativePathValues.WindowsDirectoryPath1ToWindowsFilePath1;
             var expected = PathValues.WindowsFilePath1;
 

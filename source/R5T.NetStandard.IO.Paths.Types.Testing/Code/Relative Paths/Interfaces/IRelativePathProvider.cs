@@ -9,5 +9,9 @@ namespace R5T.NetStandard.IO.Paths.Types.Testing
     public interface IRelativePathProvider
     {
         string GetRelativePath(string sourcePath, string destinationPath);
+        string GetRelativePathFileToFile(string sourceFilePath, string destinationFilePath);
+        string GetRelativePathFileToDirectory(string sourceFilePath, string destinationFilePath);
+        string GetRelativePathDirectoryToFile(string sourceDirectoryPath, string destinationFilePath);
+        string GetRelativePathDirectoryToDirectory(string sourceDirectoryPath, string destinationDirectoryPath);
     }
 }

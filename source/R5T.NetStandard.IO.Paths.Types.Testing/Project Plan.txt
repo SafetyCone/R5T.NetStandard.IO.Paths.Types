@@ -4,9 +4,12 @@ Tested Functionality
 
 Paths as Strings:
 
-	* Windows/Non-Windows directory separator detected.
 	* Is Windows/Non-Windows path?
 	* Is path directory indicated?
+	* Is path absolute/relative?
+
+	* Windows/Non-Windows directory separator detected.
 	* Is file/directory path (specifically showing true in the case of un-directory indicated directory path).
 	* Is path root indicated?
-	* Is path absolute/relative?
+
+For all, include a test of the negative (ensure that a non-Windows file path is not a Windows file path).

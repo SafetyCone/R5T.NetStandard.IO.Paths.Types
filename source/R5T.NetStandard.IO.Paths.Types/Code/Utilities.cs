@@ -968,6 +968,14 @@ namespace R5T.NetStandard.IO.Paths
             return directoryName;
         }
 
+        public static string GetDirectoryNameForFilePath(string filePath)
+        {
+            var directoryPath = Utilities.GetDirectoryPath(filePath);
+
+            var directoryName = Utilities.GetDirectoryName(directoryPath);
+            return directoryName;
+        }
+
         public static string GetParentDirectoryPath(string directoryPath)
         {
             var directoryInfo = new DirectoryInfo(directoryPath);

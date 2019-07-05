@@ -536,6 +536,28 @@ namespace R5T.NetStandard.IO.Paths
 
         #region Paths as Strings
 
+        public static bool ExistsFilePath(string filePath)
+        {
+            var output = File.Exists(filePath);
+            return output;
+        }
+
+        public static bool ExistsDirectoryPath(string directoryPath)
+        {
+            var output = Directory.Exists(directoryPath);
+            return output;
+        }
+
+        public static void DeleteFilePath(string filePath)
+        {
+            File.Delete(filePath);
+        }
+
+        public static void DeleteDirectoryPath(string directoryPath, bool recursive = true)
+        {
+            Directory.Delete(directoryPath, recursive);
+        }
+
         /// <summary>
         /// If a Windows directory separator is detected in the path (see <see cref="Utilities.WindowsDirectorySeparatorDetected(string)"/>), then it is a Windows path.
         /// If no directory separator is detected (for example, if the path is just a directory name), assume Windows.
@@ -1292,6 +1314,22 @@ namespace R5T.NetStandard.IO.Paths
             return fileName;
         }
 
+        /// <summary>
+        /// Returns the file-extension without the leading file-extension separator ("txt" instead of ".txt").
+        /// </summary>
+        public static string GetFileExtension(string filePath)
+        {
+            var fileExtension = Utilities.GetExtensionSystem(filePath).ExceptFirst();
+            return fileExtension;
+        }
+
+        // Uses 
+        public static string[] GetFileNameSegments(string fileNameWithoutExtension, params string[] fileNameSegmentSeparators)
+        {
+            var fileNameSegments = fileNameWithoutExtension.Split(fileNameSegmentSeparators, StringSplitOptions.None);
+            return fileNameSegments;
+        }
+
         #endregion
 
         #region Strongly-Typed File-Name
@@ -1367,6 +1405,18 @@ namespace R5T.NetStandard.IO.Paths
             return fileName;
         }
 
+        public static FileExtension GetFileExtension(FileName fileName)
+        {
+            var fileExtension = Utilities.GetFileExtension(fileName.Value).AsFileExtension();
+            return fileExtension;
+        }
+
+        public static FileExtension GetFileExtension(FilePath filePath)
+        {
+            var fileExtension = Utilities.GetFileExtension(filePath.Value).AsFileExtension();
+            return fileExtension;
+        }
+
         /// <summary>
         /// Combines <see cref="FileNameSegment"/>s into a <see cref="FileNameWithoutExtension"/> using the specified <see cref="FileNameSegmentSeparator"/>.
         /// </summary>
@@ -1406,6 +1456,12 @@ namespace R5T.NetStandard.IO.Paths
             return fileNameWithoutExtension;
         }
 
+        public static FileNameSegment[] GetFileNameSegments(FileNameWithoutExtension fileNameWithoutExtension, params FileNameSegmentSeparator[] fileNameSegmentSeparators)
+        {
+            var output = Utilities.GetFileNameSegments(fileNameWithoutExtension.Value, fileNameSegmentSeparators.Select(x => x.Value).ToArray()).Select(x => x.AsFileNameSegment()).ToArray();
+            return output;
+        }
+
         #endregion
 
         #region Strongly-Typed Directory And File Paths
@@ -1420,6 +1476,31 @@ namespace R5T.NetStandard.IO.Paths
         {
             var output = File.Exists(directoryPath.Value);
             return output;
+        }
+
+        public static void Delete(FilePath filePath)
+        {
+            File.Delete(filePath.Value);
+        }
+
+        public static void DeleteFilePath(FilePath filePath)
+        {
+            // Can delete file path regardless of whether it exists.
+            File.Delete(filePath.Value);
+        }
+
+        public static void Delete(DirectoryPath directoryPath, bool recursive = true)
+        {
+            Directory.Delete(directoryPath.Value, recursive);
+        }
+
+        public static void DeleteDirectoryPath(DirectoryPath directoryPath, bool recursive = true)
+        {
+            // Only delete directory if it exists, else this is throws an exception.
+            if(Directory.Exists(directoryPath.Value))
+            {
+                Directory.Delete(directoryPath.Value, recursive);
+            }
         }
 
         /// <summary>

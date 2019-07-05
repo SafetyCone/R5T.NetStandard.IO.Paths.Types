@@ -3,7 +3,16 @@ R5T.NetStandard.IO.Paths.Types - A base types library for the R5T.NetStandard.IO
 Goals
 
 * Comment on System.IO.Path functionality.
+* Combine path segments.
 * Compute relative paths.
+* Resolve paths. Resolving a path means transforming a path containing relative path segments (like "." and "..") to the corresponding absolute path.
+* Normalize paths. Normalizing a path means taking a path that might have different directory separators, or other not yet encountered class of heterogeneity, and normalizing it to match the plain, simple, normal path, with only one directory separator or other single value from a heterogeneity class.
+* Provide strongly-typed path parts that can be used as base-classes for other specific strongly-typed file and directory types.
+* Provide utilities for manipulation paths at both the 1) string, and 2) strongly-typed levels of abstraction.
+* Provide utilities that help ensure path correctness by performing various tests and manipulations on input values.
+* Provide "Simple" utilities that perform NO tests or manipulations on input values to allow conceptual clarity. The default is to perform manipulations.
+* Perform checks on stringly-typed input values to help ensure path correctness.
+* Provide "Unchecked" utilities that skip performing checks for speed, simplicity, or non-standard uses. The default is to perform checks.
 
 
 Directory-Indicated and Root-Indicated
@@ -32,11 +41,10 @@ Determining if a string path is a Windows or non-Windows path is a simple matter
 
 But what if a path is a "mixed" path (contains BOTH Windows and non-Windows directory separators)? This can result from combining a Windows absolute path and a non-Windows relative path, or vice-versa. In this case whichever directory separator comes first "dominates" the path (is closer to the root). Whichever directory separator dominates a mixed path determines with the path is a Windows or non-Windows path.
 
-And what if a path has not directory separators? This is the case for relative paths of direct children, which is either just the file or directory name (if the directory name, as is usual, is not directory-indicated). In this case assumed and strict methods are provided. Assumed methods assume the directory separator being tested for, e.g. IsWindowsPath() will assume that a path without any directory separators is a Windows path, and return true. The IsWindowsPathStrict() method will return false since there is no directory separator available to strictly determine.
+And what if a path has no directory separators? A real example is the relative paths of direct children, which is either just a file or directory name (if the directory name, as usual, is not directory-indicated). In this case "Default", "Strict", and base methods are provided. Default methods assume the directory separator being tested for in case none can be determined (e.g. IsWindowsPath() will assume that a path without any directory separators is a Windows path, and return true). Strict methods will not make any assumption if no directory separator can be determined (e.g. IsWindowsPathStrict() will return false since there is no directory separator available to strictly determine).
 
 
 File or Directory
-
 
 At the string-level of abstraction, directory paths can be indicated (end with a directory separator) or unindicated. The default is an indicated path, there there are directory paths and unindcated directory paths.
 

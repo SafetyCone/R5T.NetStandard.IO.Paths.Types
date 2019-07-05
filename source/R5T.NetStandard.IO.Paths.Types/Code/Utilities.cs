@@ -282,12 +282,21 @@ namespace R5T.NetStandard.IO.Paths
         #region Separators
 
         /// <summary>
+        /// Returns the System <see cref="Path.DirectorySeparatorChar"/> as the default.
+        /// </summary>
+        public static string GetDefaultDirectorySeparatorValue()
+        {
+            var output = Utilities.DirectorySeparatorCharSystem.ToString();
+            return output;
+        }
+
+        /// <summary>
         /// Finds the first instance of a directory separator (whether Windows or non-Windows).
         /// A path might have both Windows and non-Windows directory separators. But whichever occurs first in the path is more dominant (closer to the root), so that is the path's directory separator.
         /// Returns true if the a directory separator can be detected.
         /// If no directory separator can be detected, the output <paramref name="directorySeparator"/> is null.
         /// </summary>
-        public static bool TryDetectDirectorySeparator(string path, out string directorySeparator)
+        public static bool TryDetectDirectorySeparator(string path, out string directorySeparator, string defaultDirectorySeparator)
         {
             var indexOfWindows = path.IndexOf(Constants.DefaultWindowsDirectorySeparator);
             var indexOfNonWindows = path.IndexOf(Constants.DefaultNonWindowsDirectorySeparator);
@@ -298,7 +307,7 @@ namespace R5T.NetStandard.IO.Paths
             // Neither Windows nor non-Windows directory is found, 
             if (!windowsFound && !nonWindowsFound)
             {
-                directorySeparator = DirectorySeparator.InvalidDirectorySeparatorValue;
+                directorySeparator = defaultDirectorySeparator;
                 return false;
             }
 
@@ -331,8 +340,31 @@ namespace R5T.NetStandard.IO.Paths
             }
         }
 
+        public static bool TryDetectDirectorySeparatorOrInvalid(string path, out string directorySeparator)
+        {
+            var output = Utilities.TryDetectDirectorySeparator(path, out directorySeparator, DirectorySeparator.InvalidValue);
+            return output;
+        }
+
+        public static bool TryDetectDirectorySeparatorOrDefault(string path, out string directorySeparator)
+        {
+            var defaultDirectorySeparator = Utilities.GetDefaultDirectorySeparatorValue();
+
+            var output = Utilities.TryDetectDirectorySeparator(path, out directorySeparator, defaultDirectorySeparator);
+            return output;
+        }
+
         /// <summary>
-        /// Detect a directory separator in the path, or throw an exception.
+        /// Uses the default directory separator.
+        /// </summary>
+        public static bool TryDetectDirectorySeparator(string path, out string directorySeparator)
+        {
+            var output = Utilities.TryDetectDirectorySeparatorOrDefault(path, out directorySeparator);
+            return output;
+        }
+
+        /// <summary>
+        /// Detect a directory separator in the path, or throws an exception.
         /// </summary>
         public static string DetectDirectorySeparator(string path)
         {
@@ -346,9 +378,19 @@ namespace R5T.NetStandard.IO.Paths
         }
 
         /// <summary>
+        /// Detect a directory separator in the path, or uses the default.
+        /// </summary>
+        public static string DetectDirectorySeparatorOrDefault(string path)
+        {
+            Utilities.TryDetectDirectorySeparatorOrDefault(path, out var directorySeparator);
+
+            return directorySeparator;
+        }
+
+        /// <summary>
         /// If a directory separator cannot be detected (for example, if the relative path between two directories is just the un-indicated directory name "DirectoryName"), return the specified default.
         /// </summary>
-        public static string DetectDirectorySeparatorDefault(string path, string defaultDirectorySeparator)
+        public static string DetectDirectorySeparatorSpecifyDefault(string path, string defaultDirectorySeparator)
         {
             var detectionSuccess = Utilities.TryDetectDirectorySeparator(path, out var directorySeparator);
             if (!detectionSuccess)
@@ -364,7 +406,7 @@ namespace R5T.NetStandard.IO.Paths
         /// </summary>
         public static string DetectDirectorySeparatorDefaultWindows(string path)
         {
-            var directorySeparator = Utilities.DetectDirectorySeparatorDefault(path, Constants.DefaultWindowsDirectorySeparator);
+            var directorySeparator = Utilities.DetectDirectorySeparatorSpecifyDefault(path, Constants.DefaultWindowsDirectorySeparator);
             return directorySeparator;
         }
 
@@ -373,7 +415,7 @@ namespace R5T.NetStandard.IO.Paths
         /// </summary>
         public static string DetectDirectorySeparatorDefaultNonWindows(string path)
         {
-            var directorySeparator = Utilities.DetectDirectorySeparatorDefault(path, Constants.DefaultNonWindowsDirectorySeparator);
+            var directorySeparator = Utilities.DetectDirectorySeparatorSpecifyDefault(path, Constants.DefaultNonWindowsDirectorySeparator);
             return directorySeparator;
         }
 
@@ -470,6 +512,12 @@ namespace R5T.NetStandard.IO.Paths
 
         #region Strongly-Typed Separators
 
+        public static DirectorySeparator GetDefaultDirectorySeparator()
+        {
+            var defaultDirectorySeparator = Utilities.GetDefaultDirectorySeparatorValue().AsDirectorySeparator();
+            return defaultDirectorySeparator;
+        }
+
         //public static DirectorySeparator DetectDirectorySeparator(PathSegment pathSegment)
         //{
         //    var directorySeparatorValue = Utilities.DetectDirectorySeparator(pathSegment.Value);
@@ -492,7 +540,7 @@ namespace R5T.NetStandard.IO.Paths
         /// If a Windows directory separator is detected in the path (see <see cref="Utilities.WindowsDirectorySeparatorDetected(string)"/>), then it is a Windows path.
         /// If no directory separator is detected (for example, if the path is just a directory name), assume Windows.
         /// </summary>
-        public static bool IsWindowsPath(string path)
+        public static bool IsWindowsPathDefault(string path)
         {
             var output = Utilities.WindowsDirectorySeparatorDetectedDefaultWindows(path);
             return output;
@@ -508,6 +556,15 @@ namespace R5T.NetStandard.IO.Paths
             return output;
         }
 
+        /// <summary>
+        /// Base method uses the default method.
+        /// </summary>
+        public static bool IsWindowsPath(string path)
+        {
+            var output = Utilities.IsWindowsPathDefault(path);
+            return output;
+        }
+
         public static string EnsureWindowsPath(string path)
         {
             var windowsPath = Utilities.EnsureWindowsDirectorySeparator(path);
@@ -516,9 +573,9 @@ namespace R5T.NetStandard.IO.Paths
 
         /// <summary>
         /// If a non-Windows directory separator is detected in the path (see <see cref="Utilities.NonWindowsDirectorySeparatorDetected(string)"/>), then it is a non-Windows path.
-        /// /// If no directory separator is detected (for example, if the path is just a directory name), assume non-Windows.
+        /// If no directory separator is detected (for example, if the path is just a directory name), assume non-Windows.
         /// </summary>
-        public static bool IsNonWindowsPath(string path)
+        public static bool IsNonWindowsPathDefault(string path)
         {
             var output = Utilities.NonWindowsDirectorySeparatorDetectedDefaultNonWindows(path);
             return output;
@@ -531,6 +588,15 @@ namespace R5T.NetStandard.IO.Paths
         public static bool IsNonWindowsPathStrict(string path)
         {
             var output = Utilities.NonWindowsDirectorySeparatorDetected(path);
+            return output;
+        }
+
+        /// <summary>
+        /// Base method uses the default method.
+        /// </summary>
+        public static bool IsNonWindowsPath(string path)
+        {
+            var output = Utilities.IsNonWindowsPathDefault(path);
             return output;
         }
 
@@ -584,6 +650,18 @@ namespace R5T.NetStandard.IO.Paths
             }
 
             return filePath;
+        }
+
+        public static string EnsureDirectoryPathIsDirectoryIndicated(string directoryPath, string directorySeparator)
+        {
+            var lastCharIsDirectorySeparator = Utilities.IsPathDirectoryIndicated(directoryPath);
+            if (!lastCharIsDirectorySeparator)
+            {
+                var output = directoryPath.Append(directorySeparator);
+                return output;
+            }
+
+            return directoryPath;
         }
 
         public static string EnsureDirectoryPathIsDirectoryIndicated(string directoryPath)
@@ -738,12 +816,6 @@ namespace R5T.NetStandard.IO.Paths
             return relativePath;
         }
 
-
-        public static string GetRelativePathCustomLogic(string fromPath, string toPath)
-        {
-            throw new NotImplementedException();
-        }
-
         public static string GetRelativePath(string sourcePath, string destinationPath)
         {
             var sourceIsFilePath = Utilities.IsFilePath(sourcePath);
@@ -853,11 +925,36 @@ namespace R5T.NetStandard.IO.Paths
         }
 
         /// <summary>
-        /// Simply combines two paths using the specified directory.
-        /// Returns path1{directorySeparator}path2.
+        /// Simply concatenates the two paths, with the assumption that path1 is directory-indicated (ends with a directory separator).
+        /// Returns {<paramref name="indicatedDirectoryPath1"/>}{<paramref name="path2"/>}.
         /// </summary>
+        public static string CombineSimple(string indicatedDirectoryPath1, string path2)
+        {
+            var output = $"{indicatedDirectoryPath1}{path2}";
+            return output;
+        }
+
+        /// <summary>
+        /// Simply concatenates two paths using the specified directory.
+        /// Returns {<paramref name="path1"/>}{<paramref name="directorySeparator"/>}{<paramref name="path2"/>}.
+        /// Performs no checks, and assumes that the specified directory separator is actually a directory separator.
+        /// </summary>
+        public static string CombineSimpleUnchecked(string path1, string path2, string directorySeparator)
+        {
+            var output = $"{path1}{directorySeparator}{path2}";
+            return output;
+        }
+
+        /// <summary>
+        /// Simply concatenates two paths using the specified directory.
+        /// Returns {<paramref name="path1"/>}{<paramref name="directorySeparator"/>}{<paramref name="path2"/>}.
+        /// Checks that the specified directory separator is actually a directory separator, and throws an <see cref="ArgumentException"/> if it is not.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown if the <paramref name="directorySeparator"/> is not a directory separator according to <see cref="DirectorySeparator.IsDirectorySeparator(string)"/>.</exception>
         public static string CombineSimple(string path1, string path2, string directorySeparator)
         {
+            DirectorySeparator.ValidateDirectorySeparatorArgument(directorySeparator, nameof(directorySeparator));
+
             var output = $"{path1}{directorySeparator}{path2}";
             return output;
         }
@@ -984,6 +1081,48 @@ namespace R5T.NetStandard.IO.Paths
             return parentDirectoryPath;
         }
 
+        /// <summary>
+        /// Simply concatenates the directory path, directory separator, and file name.
+        /// Performs no checks, and assumes that the specified directory separator is actually a directory separator.
+        /// </summary>
+        public static string GetFilePathSimpleUnchecked(string directoryPath, string fileName, string directorySeparator)
+        {
+            var filePath = Utilities.CombineSimpleUnchecked(directoryPath, fileName, directorySeparator);
+            return filePath;
+        }
+
+        /// <summary>
+        /// Simply concatenates the directory path, directory separator, and file name.
+        /// Checks that the specified directory separator is actually a directory separator, and throws an <see cref="ArgumentException"/> if it is not.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown if the <paramref name="directorySeparator"/> is not a directory separator according to <see cref="DirectorySeparator.IsDirectorySeparator(string)"/>.</exception>
+        public static string GetFilePathSimple(string directoryPath, string fileName, string directorySeparator)
+        {
+            DirectorySeparator.ValidateDirectorySeparatorArgument(directorySeparator, nameof(directorySeparator));
+
+            var filePath = Utilities.CombineSimpleUnchecked(directoryPath, fileName, directorySeparator); // Directory separator assumed to be checked at this point.
+            return filePath;
+        }
+
+        /// <summary>
+        /// Combines the directory path with the file name using the specified directory separator.
+        /// The directory path is checked for whether it is directory-indicated.
+        /// The output path is ensured to use the specified directory separator.
+        /// Checks that the specified directory separator is actually a directory separator, and throws an exception if not.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown if the <paramref name="directorySeparator"/> is not a directory separator according to <see cref="DirectorySeparator.IsDirectorySeparator(string)"/>.</exception>
+        public static string GetFilePath(string directoryPath, string fileName, string directorySeparator)
+        {
+            DirectorySeparator.ValidateDirectorySeparatorArgument(directorySeparator, nameof(directorySeparator));
+
+            var indicatedDirectoryPath = Utilities.EnsureDirectoryPathIsDirectoryIndicated(directoryPath, directorySeparator);
+
+            var filePath = Utilities.CombineSimple(indicatedDirectoryPath, fileName);
+
+            var ensuredFilePath = Utilities.EnsureDirectorySeparator(filePath, directorySeparator);
+            return ensuredFilePath;
+        }
+
         #endregion
 
         #region Strongly-Typed Paths
@@ -1050,6 +1189,21 @@ namespace R5T.NetStandard.IO.Paths
                 return output;
             }
         }
+
+        ///// <summary>
+        ///// If a path is root-indicated (see <see cref="Utilities.IsPathRootIndicated(string)"/>, then it is an absolute path.
+        ///// </summary>
+        //public static bool IsAbsolutePath(AbsolutePath absolutePath)
+        //{
+        //    var output = Utilities.IsAbsolutePath(absolutePath.Value);
+        //    return output;
+        //}
+
+        //public static bool IsPathRootIndicated(string path)
+        //{
+        //    var pathBeginsWithRooting = Regex.IsMatch(path, Constants.RootIndicatedPathRegexPattern);
+        //    return pathBeginsWithRooting;
+        //}
 
         #endregion
 
@@ -1307,6 +1461,20 @@ namespace R5T.NetStandard.IO.Paths
         public static FilePath GetFilePath(DirectorySeparator directorySeparator, AbsolutePath absolutePath, params PathSegment[] pathSegments)
         {
             var filePath = Utilities.Combine(directorySeparator, absolutePath, pathSegments).AsFilePath();
+            return filePath;
+        }
+
+        public static FilePath GetFilePath(DirectoryPath directoryPath, FileName fileName, DirectorySeparator directorySeparator)
+        {
+            var filePath = Utilities.GetFilePath(directoryPath.Value, fileName.Value, directorySeparator.Value).AsFilePath();
+            return filePath;
+        }
+
+        public static FilePath GetFilePath(DirectoryPath directoryPath, FileName fileName)
+        {
+            var defaultDirectorySeparator = Utilities.GetDefaultDirectorySeparator();
+
+            var filePath = Utilities.GetFilePath(directoryPath, fileName, defaultDirectorySeparator);
             return filePath;
         }
 

@@ -29,6 +29,12 @@ namespace R5T.NetStandard.IO.Paths.Extensions
             return directoryPath;
         }
 
+        public static DirectorySeparator AsDirectorySeparator(this string value)
+        {
+            var directorySeparator = new DirectorySeparator(value);
+            return directorySeparator;
+        }
+
         public static DirectoryRelativePath AsDirectoryRelativePath(this string value)
         {
             var directoryRelativePath = new DirectoryRelativePath(value);

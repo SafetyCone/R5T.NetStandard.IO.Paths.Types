@@ -24,6 +24,8 @@ namespace R5T.NetStandard.IO.Paths.Types
         public const string WindowsDirectoryPath1ToWindowsDirectoryPath2Unindicated = @"Directory2";
         public const string WindowsDirectoryPath1ToWindowsDirectoryPath2 = @"Directory2\";
         public const string WindowsDirectoryPath1ToWindowsDirectoryPath2Uri = @"Directory2/"; // Note the non-Windows path separator.
+        public const string WindowsDirectoryPath1ToWindowsDirectoryPath3Unindicated = @"Directory2\Directory3";
+        public const string WindowsDirectoryPath1ToWindowsDirectoryPath3 = @"Directory2\Directory3\";
 
         public const string NonWindowsFilePath1ToNonWindowsFilePath2 = @"../File2.txt";
         public const string NonWindowsFilePath1ToNonWindowsFilePath2Uri = @"File2.txt";
@@ -32,6 +34,14 @@ namespace R5T.NetStandard.IO.Paths.Types
         public const string NonWindowsDirectoryPath1ToNonWindowsFilePath1 = @"Directory2/Directory3/File1.txt";
 
         public const string NonWindowsDirectoryPath1ToNonWindowsDirectoryPath2Unindicated = @"Directory2";
-        public const string NonWindowsDirectoryPath1ToNonWindowsDirectoryPath2 = @"Directory2\";
+        public const string NonWindowsDirectoryPath1ToNonWindowsDirectoryPath2 = @"Directory2/";
+        public const string NonWindowsDirectoryPath1ToNonWindowsDirectoryPath3Unindicated = @"Directory2/Directory3";
+        public const string NonWindowsDirectoryPath1ToNonWindowsDirectoryPath3 = @"Directory2/Directory3/";
+
+        public const string DirectoryNameOnlyRelativePathUnindicated = @"Directory2";
+        public const string DirectoryNameOnlyRelativePathUnindicatedWindows = @"Directory2"; // Same as non-Windows.
+        public const string DirectoryNameOnlyRelativePathUnindicatedNonWindows = @"Directory2"; // Same as Windows.
+        public const string DirectoryNameOnlyRelativePathWindows = @"Directory2\";
+        public const string DirectoryNameOnlyRelativePathNonWindows = @"Directory2/";
     }
 }

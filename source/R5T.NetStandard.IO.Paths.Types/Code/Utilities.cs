@@ -932,7 +932,7 @@ namespace R5T.NetStandard.IO.Paths
         }
 
         /// <summary>
-        /// If the unresolved path is known to be the path of a file, ensure 
+        /// If the unresolved path is known to be the path of a file.
         /// </summary>
         public static string ResolveFilePath(string unresolvedFilePath)
         {
@@ -944,6 +944,14 @@ namespace R5T.NetStandard.IO.Paths
         {
             var resolvedDirectoryPath = Utilities.ResolvePath(unresolvedDirectoryPath);
             return resolvedDirectoryPath;
+        }
+
+        public static string Combine(string path1, string path2)
+        {
+            var directorySeparator = Utilities.DetectDirectorySeparatorOrDefault(path1);
+
+            var combinedPath = Utilities.CombineSimpleUnchecked(path1, path2, directorySeparator);
+            return combinedPath;
         }
 
         /// <summary>

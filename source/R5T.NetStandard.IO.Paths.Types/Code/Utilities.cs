@@ -1569,8 +1569,26 @@ namespace R5T.NetStandard.IO.Paths
 
         public static FileRelativePath GetRelativePath(FilePath fromFilePath, FilePath toFilePath)
         {
-            var fileRelativePath = Utilities.GetRelativePath(fromFilePath.Value, toFilePath.Value).AsFileRelativePath();
+            var fileRelativePath = Utilities.GetRelativePathFileToFile(fromFilePath.Value, toFilePath.Value).AsFileRelativePath();
             return fileRelativePath;
+        }
+
+        public static FileRelativePath GetRelativePath(DirectoryPath fromDirectoryPath, FilePath toFilePath)
+        {
+            var fileRelativePath = Utilities.GetRelativePathDirectoryToFile(fromDirectoryPath.Value, toFilePath.Value).AsFileRelativePath();
+            return fileRelativePath;
+        }
+
+        public static DirectoryRelativePath GetRelativePath(FilePath fromFilePath, DirectoryPath toDirectoryPath)
+        {
+            var directoryRelativePath = Utilities.GetRelativePathFileToDirectory(fromFilePath.Value, toDirectoryPath.Value).AsDirectoryRelativePath();
+            return directoryRelativePath;
+        }
+
+        public static DirectoryRelativePath GetRelativePath(DirectoryPath fromDirectoryPath, DirectoryPath toDirectoryPath)
+        {
+            var directoryRelativePath = Utilities.GetRelativePathFileToFile(fromDirectoryPath.Value, toDirectoryPath.Value).AsDirectoryRelativePath();
+            return directoryRelativePath;
         }
 
         public static DirectoryName GetDirectoryName(DirectoryPath directoryPath)

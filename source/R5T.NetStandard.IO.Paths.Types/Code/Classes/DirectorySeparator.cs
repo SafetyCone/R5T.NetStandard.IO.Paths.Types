@@ -15,17 +15,17 @@ namespace R5T.NetStandard.IO.Paths
 
         #region Static
 
-        public static readonly string DefaultWindowsValue = Constants.DefaultWindowsDirectorySeparator;
+        public static readonly string DefaultWindowsValue = Constants.WindowsDirectorySeparator;
         /// <summary>
         /// Separates directory path segments in Windows-style paths.
         /// </summary>
-        public static readonly DirectorySeparator DefaultWindows = new DirectorySeparator(Constants.DefaultWindowsDirectorySeparator);
+        public static readonly DirectorySeparator DefaultWindows = new DirectorySeparator(Constants.WindowsDirectorySeparator);
 
-        public static readonly string DefaultNonWindowsValue = Constants.DefaultNonWindowsDirectorySeparator;
+        public static readonly string DefaultNonWindowsValue = Constants.NonWindowsDirectorySeparator;
         /// <summary>
         /// Separates directory path segments in non-Windows-style paths.
         /// </summary>
-        public static readonly DirectorySeparator DefaultNonWindows = new DirectorySeparator(Constants.DefaultNonWindowsDirectorySeparator);
+        public static readonly DirectorySeparator DefaultNonWindows = new DirectorySeparator(Constants.NonWindowsDirectorySeparator);
 
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace R5T.NetStandard.IO.Paths
         /// </summary>
         public static bool IsDirectorySeparator(string possibleDirectorySeparator)
         {
-            var output = possibleDirectorySeparator == Constants.DefaultWindowsDirectorySeparator || possibleDirectorySeparator == Constants.DefaultNonWindowsDirectorySeparator;
+            var output = possibleDirectorySeparator == Constants.WindowsDirectorySeparator || possibleDirectorySeparator == Constants.NonWindowsDirectorySeparator;
             return output;
         }
 
@@ -42,7 +42,7 @@ namespace R5T.NetStandard.IO.Paths
         /// </summary>
         public static bool IsDirectorySeparator(char character)
         {
-            var isDirectorySeparator = character == Constants.DefaultWindowsDirectorySeparatorChar || character == Constants.DefaultNonWindowsDirectorySeparatorChar;
+            var isDirectorySeparator = character == Constants.WindowsDirectorySeparatorChar || character == Constants.NonWindowsDirectorySeparatorChar;
             return isDirectorySeparator;
         }
 
@@ -83,7 +83,7 @@ namespace R5T.NetStandard.IO.Paths
         }
 
         /// <summary>
-        /// Determins if the input directory separator is not the <see cref="DirectorySeparator.InvalidValue"/>, then if it is one of the Windows of non-Windows directory separators.
+        /// Determines if the input directory separator is not the <see cref="DirectorySeparator.InvalidValue"/>, then if it is one of the Windows of non-Windows directory separators.
         /// </summary>
         public static bool IsValid(string directorySeparator)
         {
@@ -126,7 +126,7 @@ namespace R5T.NetStandard.IO.Paths
 
         public static ArgumentException GetInvalidDirectorySeparatorException(string found, string parameterName)
         {
-            var output = new ArgumentException($"Invalid directory separator.\nExpected Windows ({Constants.DefaultWindowsDirectorySeparator}) or non-Windows ({Constants.DefaultNonWindowsDirectorySeparator}) directory separator.\nFound: {found}.", parameterName);
+            var output = new ArgumentException($"Invalid directory separator.\nExpected Windows ({Constants.WindowsDirectorySeparator}) or non-Windows ({Constants.NonWindowsDirectorySeparator}) directory separator.\nFound: {found}.", parameterName);
             return output;
         }
 

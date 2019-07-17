@@ -5,6 +5,10 @@ namespace R5T.NetStandard.IO.Paths.Types
 {
     public static class PathValues
     {
+        public const string FileName1 = "File1.txt";
+        public const string WindowsFileName1 = PathValues.FileName1;
+        public const string NonndowsFileName1 = PathValues.FileName1;
+
         public const string WindowsFilePath1 = @"C:\Directory1\Directory2\Directory3\File1.txt";
         public const string WindowsFilePath2 = @"C:\Directory1\Directory2\Directory3\File2.txt";
         public const string WindowsFilePath3 = @"C:\Directory1\Directory2\File3.txt";

@@ -15,10 +15,13 @@ namespace R5T.NetStandard.IO.Paths
 
         #region Static
 
+        public static readonly string DefaultWindowsValue = Constants.DefaultWindowsDirectorySeparator;
         /// <summary>
         /// Separates directory path segments in Windows-style paths.
         /// </summary>
         public static readonly DirectorySeparator DefaultWindows = new DirectorySeparator(Constants.DefaultWindowsDirectorySeparator);
+
+        public static readonly string DefaultNonWindowsValue = Constants.DefaultNonWindowsDirectorySeparator;
         /// <summary>
         /// Separates directory path segments in non-Windows-style paths.
         /// </summary>

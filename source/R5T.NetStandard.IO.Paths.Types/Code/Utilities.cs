@@ -955,13 +955,15 @@ namespace R5T.NetStandard.IO.Paths
         }
 
         /// <summary>
-        /// Simply concatenates the two paths, with the assumption that path1 is directory-indicated (ends with a directory separator).
-        /// Returns {<paramref name="indicatedDirectoryPath1"/>}{<paramref name="path2"/>}.
+        /// Combines two path segments into a single path segment.
+        /// Simple - No directory separator is inserted between the paths (the first path segment is assumed to end with the required directory separator).
+        /// Unchecked - No check is made to ensure the first path segment does, in fact, end with a directory separator.
+        /// This literally just concatenates the two path segment strings, and returns outputPathSegment = <paramref name="directoryIndicatedPathSegment1"/> + <paramref name="pathSegment2"/>.
         /// </summary>
-        public static string CombineSimple(string indicatedDirectoryPath1, string path2)
+        public static string CombineSimpleUnchecked(string directoryIndicatedPathSegment1, string pathSegment2)
         {
-            var output = $"{indicatedDirectoryPath1}{path2}";
-            return output;
+            var outputPathSegment = directoryIndicatedPathSegment1 + pathSegment2;
+            return outputPathSegment;
         }
 
         /// <summary>
@@ -1147,7 +1149,7 @@ namespace R5T.NetStandard.IO.Paths
 
             var indicatedDirectoryPath = Utilities.EnsureDirectoryPathIsDirectoryIndicated(directoryPath, directorySeparator);
 
-            var filePath = Utilities.CombineSimple(indicatedDirectoryPath, fileName);
+            var filePath = Utilities.CombineSimpleUnchecked(indicatedDirectoryPath, fileName);
 
             var ensuredFilePath = Utilities.EnsureDirectorySeparator(filePath, directorySeparator);
             return ensuredFilePath;

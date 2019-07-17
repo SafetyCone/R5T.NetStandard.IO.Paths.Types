@@ -15,6 +15,35 @@ Goals
 * Provide "Unchecked" utilities that skip performing checks for speed, simplicity, or non-standard uses. The default is to perform checks.
 
 
+Summary
+
+Paths are defined by how they start, and how they end. If a path starts with a root (directory-separator or volume and directory-separator) then the path is a rooted- (an absolute-) path. Else the path is a relative path that must be prefixed with a rooted path. If a path ends with a directory-separator, then it is a directory-path (although directory paths may not always end with a directory-separator, in which case at the string level of abstraction the directory-path is indistinguishable from a file-path, although a file-path is likely to end in a file-extension). Else the path could be assumed to be a file-path.
+
+Thus there are four kinds of paths:
+
+	* Absolute directory-path.
+	* Relative directory-path.
+	* Absolute file-path.
+	* Relative file-path.
+
+In the choice of absolute or relative, rooted is the default assumption for a path. Thus there are:
+
+	* Paths.
+	* Relative paths.
+
+Regarding the middle of a path, a path be either resolved or unresolved. An unresolved path contains current-directory or parent-directory directory names ('.' or '..'). Path resolution is the process of following all current- or parent-directory name directions and getting the actual directory names corresponding to the destination. This results in a resolved path.
+
+In the choice of resolved or unresolved, resolved is the default assumption for a path. Thus there are:
+
+	* Paths.
+	* Unresolved paths.
+
+Finally, the directory-separator used in paths can be either the Windows or Non-Windows directory separator.
+
+There is no default assumption on directory separator. This is done to allow the variety of cases where a non-Windows path would be used (remote file server, URI, etc.) to be treated as a first-class citizen and allow easy translation between the two environments.
+
+
+
 Directory-Indicated and Root-Indicated
 
 * A path is directory-indicated if it ends with a directory separator.

@@ -298,8 +298,8 @@ namespace R5T.NetStandard.IO.Paths
         /// </summary>
         public static bool TryDetectDirectorySeparator(string path, out string directorySeparator, string defaultDirectorySeparator)
         {
-            var indexOfWindows = path.IndexOf(Constants.DefaultWindowsDirectorySeparator);
-            var indexOfNonWindows = path.IndexOf(Constants.DefaultNonWindowsDirectorySeparator);
+            var indexOfWindows = path.IndexOf(Constants.WindowsDirectorySeparator);
+            var indexOfNonWindows = path.IndexOf(Constants.NonWindowsDirectorySeparator);
 
             var windowsFound = StringHelper.IsFound(indexOfWindows);
             var nonWindowsFound = StringHelper.IsFound(indexOfNonWindows);
@@ -317,12 +317,12 @@ namespace R5T.NetStandard.IO.Paths
                 var windowsBeforeNonWindows = indexOfWindows < indexOfNonWindows; // There will never be an equals case, since two different characters cannot have the same index in a string. At least until quantum computing arrives!
                 if (windowsBeforeNonWindows)
                 {
-                    directorySeparator = Constants.DefaultWindowsDirectorySeparator;
+                    directorySeparator = Constants.WindowsDirectorySeparator;
                     return true;
                 }
                 else
                 {
-                    directorySeparator = Constants.DefaultNonWindowsDirectorySeparator;
+                    directorySeparator = Constants.NonWindowsDirectorySeparator;
                     return true;
                 }
             }
@@ -330,12 +330,12 @@ namespace R5T.NetStandard.IO.Paths
             // At this point, either the Windows or non-Windows directory separator was found.
             if(windowsFound)
             {
-                directorySeparator = Constants.DefaultWindowsDirectorySeparator;
+                directorySeparator = Constants.WindowsDirectorySeparator;
                 return true;
             }
             else
             {
-                directorySeparator = Constants.DefaultNonWindowsDirectorySeparator;
+                directorySeparator = Constants.NonWindowsDirectorySeparator;
                 return true;
             }
         }
@@ -406,7 +406,7 @@ namespace R5T.NetStandard.IO.Paths
         /// </summary>
         public static string DetectDirectorySeparatorDefaultWindows(string path)
         {
-            var directorySeparator = Utilities.DetectDirectorySeparatorSpecifyDefault(path, Constants.DefaultWindowsDirectorySeparator);
+            var directorySeparator = Utilities.DetectDirectorySeparatorSpecifyDefault(path, Constants.WindowsDirectorySeparator);
             return directorySeparator;
         }
 
@@ -415,7 +415,7 @@ namespace R5T.NetStandard.IO.Paths
         /// </summary>
         public static string DetectDirectorySeparatorDefaultNonWindows(string path)
         {
-            var directorySeparator = Utilities.DetectDirectorySeparatorSpecifyDefault(path, Constants.DefaultNonWindowsDirectorySeparator);
+            var directorySeparator = Utilities.DetectDirectorySeparatorSpecifyDefault(path, Constants.NonWindowsDirectorySeparator);
             return directorySeparator;
         }
 
@@ -426,7 +426,7 @@ namespace R5T.NetStandard.IO.Paths
         {
             Utilities.TryDetectDirectorySeparator(path, out var directorySeparator);
 
-            var output = directorySeparator == Constants.DefaultWindowsDirectorySeparator;
+            var output = directorySeparator == Constants.WindowsDirectorySeparator;
             return output;
         }
 
@@ -437,7 +437,7 @@ namespace R5T.NetStandard.IO.Paths
         {
             var directorySeparator = Utilities.DetectDirectorySeparatorDefaultWindows(path);
 
-            var output = directorySeparator == Constants.DefaultWindowsDirectorySeparator;
+            var output = directorySeparator == Constants.WindowsDirectorySeparator;
             return output;
         }
 
@@ -448,7 +448,7 @@ namespace R5T.NetStandard.IO.Paths
         {
             Utilities.TryDetectDirectorySeparator(path, out var directorySeparator);
 
-            var output = directorySeparator == Constants.DefaultNonWindowsDirectorySeparator;
+            var output = directorySeparator == Constants.NonWindowsDirectorySeparator;
             return output;
         }
 
@@ -459,23 +459,23 @@ namespace R5T.NetStandard.IO.Paths
         {
             var directorySeparator = Utilities.DetectDirectorySeparatorDefaultNonWindows(path);
 
-            var output = directorySeparator == Constants.DefaultNonWindowsDirectorySeparator;
+            var output = directorySeparator == Constants.NonWindowsDirectorySeparator;
             return output;
         }
 
         /// <summary>
-        /// Between the Windows ('\\') and the non-Windows ('/') directory separator, given one, return the other.
+        /// Between the Windows ('\') and the non-Windows ('/') directory separator, given one, return the other.
         /// If the input directory separator is neither the Windows nor non-Windows separator, the Windows separator is returned.
         /// </summary>
         public static string GetAlternateDirectorySeparator(string directorySeparator)
         {
-            if (directorySeparator == Constants.DefaultWindowsDirectorySeparator)
+            if (directorySeparator == Constants.WindowsDirectorySeparator)
             {
-                return Constants.DefaultNonWindowsDirectorySeparator;
+                return Constants.NonWindowsDirectorySeparator;
             }
             else
             {
-                return Constants.DefaultWindowsDirectorySeparator;
+                return Constants.WindowsDirectorySeparator;
             }
         }
 
@@ -491,20 +491,20 @@ namespace R5T.NetStandard.IO.Paths
         }
 
         /// <summary>
-        /// Replaces all instances of <see cref="Constants.DefaultNonWindowsDirectorySeparator"/> with <see cref="Constants.DefaultWindowsDirectorySeparator"/>.
+        /// Replaces all instances of <see cref="Constants.NonWindowsDirectorySeparator"/> with <see cref="Constants.WindowsDirectorySeparator"/>.
         /// </summary>
         public static string EnsureWindowsDirectorySeparator(string path)
         {
-            var output = Utilities.EnsureDirectorySeparator(path, Constants.DefaultWindowsDirectorySeparator);
+            var output = Utilities.EnsureDirectorySeparator(path, Constants.WindowsDirectorySeparator);
             return output;
         }
 
         /// <summary>
-        /// Replaces all <see cref="Constants.DefaultWindowsDirectorySeparator"/> with <see cref="Constants.DefaultNonWindowsDirectorySeparator"/>.
+        /// Replaces all <see cref="Constants.WindowsDirectorySeparator"/> with <see cref="Constants.NonWindowsDirectorySeparator"/>.
         /// </summary>
         public static string EnsureNonWindowsDirectorySeparator(string path)
         {
-            var output = Utilities.EnsureDirectorySeparator(path, Constants.DefaultNonWindowsDirectorySeparator);
+            var output = Utilities.EnsureDirectorySeparator(path, Constants.NonWindowsDirectorySeparator);
             return output;
         }
 
@@ -797,11 +797,11 @@ namespace R5T.NetStandard.IO.Paths
         public static string AdjustRelativePathForFileSource(string sourceFilePath, string relativePath)
         {
             // The Uri.MakeRelativeUri() output requires special handling for file path sources since it always produces paths relative to the most derived directory path (which for a file path is the path of the directory containing the file).
-            var directorySeparator = Constants.DefaultNonWindowsDirectorySeparator; // The Uri.MakeRelativeUri() method always produces paths using the non-Windows directory separator.
+            var directorySeparator = Constants.NonWindowsDirectorySeparator; // The Uri.MakeRelativeUri() method always produces paths using the non-Windows directory separator.
             var isWindowsPath = Utilities.IsWindowsPathStrict(sourceFilePath);
             if (isWindowsPath)
             {
-                directorySeparator = Constants.DefaultWindowsDirectorySeparator;
+                directorySeparator = Constants.WindowsDirectorySeparator;
             }
 
             var prefix = $"{Constants.DefaultParentDirectoryName}{directorySeparator}";
@@ -1007,7 +1007,7 @@ namespace R5T.NetStandard.IO.Paths
             for (int iSegment = 0; iSegment < nSegments - 1; iSegment++)
             {
                 var pathSegment = pathSegments[iSegment];
-                var trimmedPathSegment = pathSegment.TrimEnd(Constants.DefaultWindowsDirectorySeparatorChar, Constants.DefaultNonWindowsDirectorySeparatorChar);
+                var trimmedPathSegment = pathSegment.TrimEnd(Constants.WindowsDirectorySeparatorChar, Constants.NonWindowsDirectorySeparatorChar);
                 pathSegments[iSegment] = trimmedPathSegment;
             }
 
@@ -1015,7 +1015,7 @@ namespace R5T.NetStandard.IO.Paths
             for (int iSegment = 1; iSegment < nSegments; iSegment++)
             {
                 var pathSegment = pathSegments[iSegment];
-                var trimmedPathSegment = pathSegment.TrimStart(Constants.DefaultWindowsDirectorySeparatorChar, Constants.DefaultNonWindowsDirectorySeparatorChar);
+                var trimmedPathSegment = pathSegment.TrimStart(Constants.WindowsDirectorySeparatorChar, Constants.NonWindowsDirectorySeparatorChar);
                 pathSegments[iSegment] = trimmedPathSegment;
             }
 
@@ -1047,7 +1047,7 @@ namespace R5T.NetStandard.IO.Paths
         /// </summary>
         public static string CombineWindows(params string[] pathSegments)
         {
-            var directorySeparator = Constants.DefaultWindowsDirectorySeparator;
+            var directorySeparator = Constants.WindowsDirectorySeparator;
 
             var output = Utilities.CombineUsingDirectorySeparator(directorySeparator, pathSegments);
             return output;
@@ -1058,7 +1058,7 @@ namespace R5T.NetStandard.IO.Paths
         /// </summary>
         public static string CombineNonWindows(params string[] pathSegments)
         {
-            var directorySeparator = Constants.DefaultNonWindowsDirectorySeparator;
+            var directorySeparator = Constants.NonWindowsDirectorySeparator;
 
             var output = Utilities.CombineUsingDirectorySeparator(directorySeparator, pathSegments);
             return output;

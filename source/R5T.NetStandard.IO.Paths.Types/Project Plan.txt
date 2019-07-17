@@ -17,7 +17,7 @@ Goals
 
 Summary
 
-Paths are defined by how they start, and how they end. If a path starts with a root (directory-separator or volume and directory-separator) then the path is a rooted- (an absolute-) path. Else the path is a relative path that must be prefixed with a rooted path. If a path ends with a directory-separator, then it is a directory-path (although directory paths may not always end with a directory-separator, in which case at the string level of abstraction the directory-path is indistinguishable from a file-path, although a file-path is likely to end in a file-extension). Else the path could be assumed to be a file-path.
+Paths are defined by how they start, and how they end. If a path starts with a root (directory-separator or volume and directory-separator) then the path is a rooted- (an absolute-) path. Else the path is a relative path that must be prefixed with a rooted path. If a path ends with a directory-separator, then it is "directory-indicated". This terminology reflects the fact that directory-paths may not always end with a directory-separator. At the string level of abstraction, an un-directory-indicated directory-path is indistinguishable from a file-path (and although a file-path is likely to end in a file-extension, the lack of a file-extension is no guarantee that a path is a directory path). Thus we can say that all directory-indicated paths are directory-paths, but not all directory-paths are directory-indicated. Else the path could be assumed to be a file-path.
 
 Thus there are four kinds of paths:
 
@@ -42,6 +42,14 @@ Finally, the directory-separator used in paths can be either the Windows or Non-
 
 There is no default assumption on directory separator. This is done to allow the variety of cases where a non-Windows path would be used (remote file server, URI, etc.) to be treated as a first-class citizen and allow easy translation between the two environments.
 
+The fundamental path operation is the combination of two path segments into a single path segment using an appropriate directory separator. Because this operation relies on the use of a directory separator, if one is not provided, then one must be determined.
+
+
+Directory Separators
+
+There are two choices for the value of directory-separator: Windows ('\') and non-Windows ('/'). There is a "default" directory-separator value that can be set (between the two options), and that is initially set based on the environment in which the code is executing based on System.IO.Path.DirectorySeparatorChar. There is NOT however, a "default" Windows directory-separator nor a "default" non-Windows directory separator. While any character (or string) could conceivably be used as a directory separator, the fact remains that the Windows and *NIX systems only recognize their respective directory separators. Thus there is no need to build in the flexibility to allow different Windows directory separators or different non-Windows directory separators.
+
+In recognizing the fact that any character (or string) could be directory separator, but only two are, an "invalid" directory separator value is provided for cases in which an invalid directory separator must be represented. The invalid directory-separator value is a null string, and because there is no such thing as a null character, there is no such thing as an invalid directory-separator character value. (There can be a *nullable* character, but a decision was made that situations where an invalid directory-separator character value would be needed were too rare to spend effort to support).
 
 
 Directory-Indicated and Root-Indicated
@@ -135,6 +143,65 @@ Is() and Ensure()
 A pair of Is() and Ensure() methods acts as a fundamental unit. The Is() method tests for some property, and Ensure() will, if needed, modify an input so that it's paired Is() method returns true.
 
 Note that Ensure() methods cannot be created for operations that cannot be ensured! For example, ensuring that a path is strictly a Windows path cannot be done, since a relative file path that is just the file name cannot be ensured at the string level of abstraction.
+
+
+Operations:
+
+Directory Separator Operations:
+
+* (Good) Create a standard invalid directory-separator value Exception instance.
+* (Good) Create a standard invalid directory-separator value ArgumentException instance.
+* (Good) Create a standard Windows directory-separator value expected Exception instance.
+* (Good) Create a standard Windows directory-separator value expected ArgumentException instance.
+* (Good) Create a standard non-Windows directory-separator value expected Exception instance.
+* (Good) Create a standard non-Windows directory-separator value expected ArgumentException instance.
+* (Good) Is a character one of the directory separator values?
+* (Good) Is a string one of the directory separator values?
+* (Good) Is a string the invalid directory-separator value?
+* (Good) Is a character a given directory-separator value, and is that given directory-separator value actually a directory-separator value?
+* (Good) Is a character the Windows directory separator value?
+* (Good) Is a character the non-Windows directory separator value?
+* (Good) Is a string the Windows directory separator value?
+* (Good) Is a string the non-Windows directory separator value?
+* (Good) Is a string a given directory-separator value, and is that given directory-separator value actually a directory-separator value?
+* (Good) Is a character a valid directory separator, i.e. is a character one of the directory separator values?
+* (Good) Is a string a valid directory separator, i.e. is it not the invalid value, and is it one of the directory separator values?
+* (Good) Validate a directory separator character value, i.e. if invalid, throw a standard invalid directory-separator value ArgumentException. (Add parameter validation with ArgumentException.)
+* (Good) Validate a directory separator string value, i.e. if invalid, throw a standard invalid directory-separator value Exception. (Add parameter validation with ArgumentException.)
+* (Good) Validate a Windows directory separator string value, i.e. if invalid, throw a standard Windows directory-separator value expected Exception. (Add parameter validation with ArgumentException.) (Skip character.)
+* (Good) Validate a non-Windows directory separator string value, i.e. if invalid, throw a standard non-Windows directory-separator value expected Exception. (Add parameter validation with ArgumentException.) (Skip character.)
+* (Good) Get an environment-based default directory-separator without providing a path.
+* (Good) Get a default directory-separator without providing a path.
+* (Good) Set a default directory-separator without providing a path, checking the the value is actually one of the possible directory-separator values, and throwing a standard invalid directory-separator value ArgumentException if not.
+* (Good) Get the Windows directory-separator without providing a path.
+* (Good) Get the non-Windows directory-separator without providing a path.
+* (Good) Get the alternate directory separator string value (if Windows, then non-Windows, and vice-versa). (Allow unchecked.) (Skip character.)
+
+* (Good) Try to detect the directory separator used in a path segment, returning whether a directory separator was detected, and outputting the detected directory separator. If no directory separator can be detected in the path segment (for example, the segment is just a file-name), then return false, and output a specified default value.
+	* (Good) Use the invalid directory separator value as the specified default value.
+	* (Good) Use the default directory separator value as the specified default value. (Make the unqualified method name use this method.)
+* (Good) Detect the directory separator used in a path segment, throwing an exception if the directory separator cannot be found.
+* (Good) Detect the directory separator used in a path segment, or return the default directory separator value.
+* (Good) Detect the directory separator used in a path segment, or return a specified default value.
+	* (Good) Use the Windows directory separator as the specified default value.
+	* (Good) Use the non-Windows directory separator as the specified default value.
+* (Good) Is any directory separator detected?
+* (Good) Is a specified directory separator detected? (Allow unchecked.)
+* (Good) Is the Windows directory separator detected?
+* (Good) Is the non-Windows directory separator detected?
+* (Good) Is the Windows directory separator detected, and in case no directory separator is detected, assume Windows?
+* (Good) Is the non-Windows directory separator detected, and in case no directory separator is detected, assume non-Windows?
+* (Good) Does a path segment contain ANY directory separator?
+* (Good) Does a path segment contain a specified directory separator? (Allow unchecked.)
+	* (Good) Use the Windows directory separator as the specified value.
+	* (Good) Use the non-Windows directory separator as the specified value.
+* (Good) Does a path segment contain mixed (both Windows and non-Windows) directory separators?
+
+
+Path Operations:
+
+* (Good) Directly append a path-segment to a directory-indicated path-segment.
+* (Good) Append a path-segment to a path-segment using a provided directory-separator.
 
 
 Glossary

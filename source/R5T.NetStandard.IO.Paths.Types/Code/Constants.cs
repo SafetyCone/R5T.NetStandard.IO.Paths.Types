@@ -29,17 +29,17 @@ namespace R5T.NetStandard.IO.Paths
         /// </summary>
         public static readonly string DefaultDirectoryNameSegmentSeparator = Constants.DefaultDirectoryNameSegmentSeparatorChar.ToString();
 
-        public const char DefaultWindowsDirectorySeparatorChar = '\\';
+        public const char WindowsDirectorySeparatorChar = '\\';
         /// <summary>
-        /// Separates directory path segments in Windows-style paths.
+        /// Separates directory path segments in Windows-style paths ('\').
         /// </summary>
-        public static readonly string DefaultWindowsDirectorySeparator = Constants.DefaultWindowsDirectorySeparatorChar.ToString();
+        public static readonly string WindowsDirectorySeparator = Constants.WindowsDirectorySeparatorChar.ToString();
 
-        public const char DefaultNonWindowsDirectorySeparatorChar = '/';
+        public const char NonWindowsDirectorySeparatorChar = '/';
         /// <summary>
-        /// Separates directory path segments in non-Windows-style paths.
+        /// Separates directory path segments in non-Windows-style paths ('/').
         /// </summary>
-        public static readonly string DefaultNonWindowsDirectorySeparator = Constants.DefaultNonWindowsDirectorySeparatorChar.ToString();
+        public static readonly string NonWindowsDirectorySeparator = Constants.NonWindowsDirectorySeparatorChar.ToString();
 
         /// <summary>
         /// Name of the current directory in a path.
@@ -74,6 +74,6 @@ namespace R5T.NetStandard.IO.Paths
         /// * The non-Windows directory separator.
         /// * A volume name, the volume separator, and the Windows directory separator (because only Windows paths use the volume).
         /// </summary>
-        public static readonly string RootIndicatedPathRegexPattern = $@"^\{Constants.DefaultWindowsDirectorySeparator}|^{Constants.DefaultNonWindowsDirectorySeparator}|^.*{Constants.DefaultVolumeSeparator}\{Constants.DefaultWindowsDirectorySeparator}";
+        public static readonly string RootIndicatedPathRegexPattern = $@"^\{Constants.WindowsDirectorySeparator}|^{Constants.NonWindowsDirectorySeparator}|^.*{Constants.DefaultVolumeSeparator}\{Constants.WindowsDirectorySeparator}";
     }
 }

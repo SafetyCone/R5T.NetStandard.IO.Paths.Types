@@ -10,8 +10,6 @@ namespace R5T.NetStandard.IO.Paths
     /// </summary>
     public static class UtilitiesGood
     {
-        
-
         #region Stringly-Typed Paths
 
         /// <summary>

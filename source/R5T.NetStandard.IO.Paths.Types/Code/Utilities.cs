@@ -1619,6 +1619,12 @@ namespace R5T.NetStandard.IO.Paths
             return parentDirectoryPath;
         }
 
+        public static DirectoryPath GetParentDirectoryPath(AbsolutePath path)
+        {
+            var parentDirectoryPath = Utilities.GetParentDirectoryPath(path.Value).AsDirectoryPath();
+            return parentDirectoryPath;
+        }
+
         public static DirectoryPath GetDirectoryPath(DirectorySeparator directorySeparator, AbsolutePath absolutePath, params PathSegment[] pathSegments)
         {
             var directoryPath = Utilities.Combine(directorySeparator, absolutePath, pathSegments).AsDirectoryPath();

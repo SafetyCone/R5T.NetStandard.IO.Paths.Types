@@ -693,11 +693,21 @@ namespace R5T.NetStandard.IO.Paths
             {
                 var directorySeparator = Utilities.DetectDirectorySeparator(directoryPath);
 
-                var output = directoryPath.Append(directorySeparator);
+                var output = Utilities.MakePathDirectoryIndicatedUnchecked(directoryPath, directorySeparator);
                 return output;
             }
 
             return directoryPath;
+        }
+
+        /// <summary>
+        /// Makes a path directory-indicated by appending the specified directory separator to the directory path.
+        /// Unchecked - Performs no validation on the directory path to ensure it does not already end with a directory separator.
+        /// </summary>
+        public static string MakePathDirectoryIndicatedUnchecked(string directoryPath, string directorySeparator)
+        {
+            var output = directoryPath.Append(directorySeparator);
+            return output;
         }
 
         public static bool IsPathRootIndicated(string path)

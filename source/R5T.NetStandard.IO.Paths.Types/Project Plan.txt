@@ -203,6 +203,9 @@ Path Operations:
 * (Good) Concatenate two strings. This is the operation of combining a directory-indicated path-segment and un-rooted path-segment (or a non-directory-indicated path-segment with a rooted path-segment).
 * (Good) Concatenate a path-segment, a directory-separator, and a path-segment using a provided directory-separator. This is the operation of combining a non-directory-indicated path-segment with a un-rooted path-segment.
 
+* Make path directory indicated using a specified directory separator.
+* Make path directory indicated, using a detected directory separator.
+
 
 Glossary
 

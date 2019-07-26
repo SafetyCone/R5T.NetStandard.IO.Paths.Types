@@ -664,14 +664,8 @@ namespace R5T.NetStandard.IO.Paths
         /// </summary>
         public static string EnsureFilePathNotDirectoryIndicated(string filePath)
         {
-            var lastCharIsDirectorySeparator = Utilities.IsPathDirectoryIndicated(filePath);
-            if (lastCharIsDirectorySeparator)
-            {
-                var output = filePath.ExceptLast();
-                return output;
-            }
-
-            return filePath;
+            var output = Utilities.EnsurePathIsNotDirectoryIndicated(filePath);
+            return output;
         }
 
         public static string EnsureDirectoryPathIsDirectoryIndicated(string directoryPath, string directorySeparator)
@@ -698,6 +692,18 @@ namespace R5T.NetStandard.IO.Paths
             }
 
             return directoryPath;
+        }
+
+        public static string EnsurePathIsNotDirectoryIndicated(string path)
+        {
+            var lastCharIsDirectorySeparator = Utilities.IsPathDirectoryIndicated(path);
+            if (lastCharIsDirectorySeparator)
+            {
+                var output = path.ExceptLast();
+                return output;
+            }
+
+            return path;
         }
 
         /// <summary>

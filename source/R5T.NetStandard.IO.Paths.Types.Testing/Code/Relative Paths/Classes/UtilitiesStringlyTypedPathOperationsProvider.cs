@@ -7,6 +7,16 @@ namespace R5T.NetStandard.IO.Paths.Types.Testing
 {
     public class UtilitiesStringlyTypedPathOperationsProvider : IStringlyTypedPathOperationsProvider
     {
+        public string CombineSimple(string directoryIndicatedPathSegment1, string pathSegment2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string CombineSimple(string nonDirectoryIndicatedPathSegment1, string pathSegment2, string directorySeparator)
+        {
+            throw new NotImplementedException();
+        }
+
         public string CombineSimpleUnchecked(string directoryIndicatedPathSegment1, string pathSegment2)
         {
             var outputPathSegment = PathUtilities.CombineSimpleUnchecked(directoryIndicatedPathSegment1, pathSegment2);

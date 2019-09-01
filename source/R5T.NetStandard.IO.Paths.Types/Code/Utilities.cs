@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 
 using R5T.NetStandard.IO.Paths.Extensions;
 
+using BaseUtilities = R5T.NetStandard.IO.Paths.Base.Utilities;
+
 
 namespace R5T.NetStandard.IO.Paths
 {
@@ -1175,11 +1177,28 @@ namespace R5T.NetStandard.IO.Paths
 
         #region Strongly-Typed Paths
 
+        /// <summary>
+        /// Gets the current directory path.
+        /// Uses <see cref="Environment.CurrentDirectory"/>.
+        /// </summary>
         public static DirectoryPath CurrentDirectoryPath
         {
             get
             {
-                var output = Environment.CurrentDirectory.AsDirectoryPath();
+                var output = BaseUtilities.CurrentDirectoryPathValue.AsDirectoryPath();
+                return output;
+            }
+        }
+
+        /// <summary>
+        /// Gets the current user's profile directory path.
+        /// Uses <see cref="Environment.SpecialFolder.UserProfile"/>.
+        /// </summary>
+        public static DirectoryPath UserProfileDirectoryPath
+        {
+            get
+            {
+                var output = BaseUtilities.UserProfileDirectoryPathValue.AsDirectoryPath();
                 return output;
             }
         }
@@ -1194,10 +1213,11 @@ namespace R5T.NetStandard.IO.Paths
         {
             get
             {
-                var output = Environment.GetCommandLineArgs()[0].AsFilePath();
+                var output = BaseUtilities.ExecutablePathCommandLineArgumentValue.AsFilePath();
                 return output;
             }
         }
+
         /// <summary>
         /// Gets the path location of the executable file as specified by the entry assembly's location.
         /// </summary>
@@ -1205,12 +1225,13 @@ namespace R5T.NetStandard.IO.Paths
         {
             get
             {
-                var output = Assembly.GetEntryAssembly().Location.AsFilePath();
+                var output = BaseUtilities.ExecutablePathEntryAssemblyValue.AsFilePath();
                 return output;
             }
         }
+
         /// <summary>
-        /// Gets the rooted path of the executable via the default route, <see cref="Utilities.ExecutablePathCommandLineArgument"/>.
+        /// Gets the path location of the executable via the default method, <see cref="Utilities.ExecutablePathCommandLineArgument"/>.
         /// </summary>
         /// <remarks>
         /// There are multiple ways to get the location of the executable, and depending on context (unit test, debugging in Visual Studio, or production) different locations are returned.
@@ -1224,6 +1245,7 @@ namespace R5T.NetStandard.IO.Paths
                 return output;
             }
         }
+
         /// <summary>
         /// Gets the directory location of the executable as the directory containing the executable rooted path, <see cref="Utilities.ExecutablePath"/>.
         /// </summary>

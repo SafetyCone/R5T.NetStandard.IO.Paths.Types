@@ -1246,6 +1246,17 @@ namespace R5T.NetStandard.IO.Paths
             }
         }
 
+        public static string ExecutableDirectoryPathValue
+        {
+            get
+            {
+                var executableFilePathValue = BaseUtilities.ExecutablePathValue;
+
+                var output = Utilities.GetDirectoryPath(executableFilePathValue);
+                return output;
+            }
+        }
+
         /// <summary>
         /// Gets the directory location of the executable as the directory containing the executable rooted path, <see cref="Utilities.ExecutablePath"/>.
         /// </summary>

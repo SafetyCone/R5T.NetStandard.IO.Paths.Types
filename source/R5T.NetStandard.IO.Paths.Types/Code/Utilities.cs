@@ -1125,9 +1125,11 @@ namespace R5T.NetStandard.IO.Paths
 
         public static string GetParentDirectoryPath(string directoryPath)
         {
-            var directoryInfo = new DirectoryInfo(directoryPath);
+            var directorySeparator = Utilities.DetectDirectorySeparator(directoryPath);
 
-            var parentDirectoryPath = directoryInfo.Parent.FullName;
+            var lastDirectorySeparatorIndex = directoryPath.LastIndexOf(directorySeparator);
+
+            var parentDirectoryPath = directoryPath.Substring(0, lastDirectorySeparatorIndex);
             return parentDirectoryPath;
         }
 

@@ -652,6 +652,43 @@ namespace R5T.NetStandard.IO.Paths
         }
 
         /// <summary>
+        /// Determines if the destination of a path is a directory.
+        /// Note: the path must exist!
+        /// </summary>
+        /// <remarks>
+        /// See: https://stackoverflow.com/questions/1395205/better-way-to-check-if-a-path-is-a-file-or-a-directory
+        /// </remarks>
+        public static bool IsDirectory(string path)
+        {
+            var output = File.GetAttributes(path).HasFlag(FileAttributes.Directory);
+            return output;
+        }
+
+        /// <summary>
+        /// Determines if the destination of a path is a file.
+        /// </summary>
+        public static bool IsFile(string path)
+        {
+            var isDirectory = Utilities.IsDirectory(path);
+
+            var output = !isDirectory;
+            return output;
+        }
+
+        /// <summary>
+        /// If a directory contains only directories, recursively, then 
+        /// </summary>
+        /// <param name="directoryPath"></param>
+        /// <returns></returns>
+        public static bool IsDirectoryRecursivelyEmpty(string directoryPath)
+        {
+            var countOfFiles = Directory.EnumerateFiles(directoryPath, SearchPatternHelper.All, SearchOption.AllDirectories).Count();
+
+            var output = countOfFiles == 0;
+            return output;
+        }
+
+        /// <summary>
         /// If a path is directory-indicated (ends with a directory separator), then is it possibly a directory path.
         /// NOTE! This is only true if the caller has taken steps to ensure it is true! A directory path may NOT end in a directory separator. At the string-level how can a file path string be differentiated from a directory-path string? Directories ARE files!
         /// </summary>

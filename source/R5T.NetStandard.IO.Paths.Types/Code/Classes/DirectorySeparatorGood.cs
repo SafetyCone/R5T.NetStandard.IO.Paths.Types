@@ -43,7 +43,7 @@ namespace R5T.NetStandard.IO.Paths
         {
             get
             {
-                return DirectorySeparatorGood.DefaultValue;
+                return DirectorySeparatorGood.zDefaultValue;
             }
             set
             {
@@ -314,7 +314,7 @@ namespace R5T.NetStandard.IO.Paths
         /// <summary>
         /// Attempts to detect the directory separator (Windows or non-Windows) used within a path segment.
         /// Returns true if the a directory separator can be detected.
-        /// Returns false if a directory separator cannot be detected, and sets the output <paramref name="directorySeparator"/> to the <paramref name="defaultDirectorySeparator"/> value.
+        /// Returns false if a directory separator cannot be detected, and sets the output <paramref name="directorySeparator"/> to the provided <paramref name="defaultDirectorySeparator"/> value.
         /// A path segment might have both Windows and non-Windows directory separators. Whichever occurs first in the path segment (thus, closer to the root) is dominant, and is returned as the path segment's directory separator.
         /// </summary>
         public static bool TryDetectDirectorySeparator(string pathSegment, out string directorySeparator, string defaultDirectorySeparator)
@@ -531,7 +531,9 @@ namespace R5T.NetStandard.IO.Paths
         /// </summary>
         public static bool ContainsDirectorySeparator(string pathSegment)
         {
-            var output = pathSegment.Contains(DirectorySeparatorGood.WindowsValue) || pathSegment.Contains(DirectorySeparatorGood.NonWindowsValue);
+            var output = pathSegment.Contains(DirectorySeparatorGood.WindowsValue)
+                || pathSegment.Contains(DirectorySeparatorGood.NonWindowsValue);
+
             return output;
         }
 
@@ -584,9 +586,9 @@ namespace R5T.NetStandard.IO.Paths
         /// </summary>
         public static bool ContainsMixedDirectorySeparator(string pathSegment)
         {
-            var output =
-                DirectorySeparatorGood.ContainsWindowsDirectorySeparator(pathSegment) &&
-                DirectorySeparatorGood.ContainsNonWindowsDirectorySeparator(pathSegment);
+            var output = DirectorySeparatorGood.ContainsWindowsDirectorySeparator(pathSegment)
+                && DirectorySeparatorGood.ContainsNonWindowsDirectorySeparator(pathSegment);
+
             return output;
         }
 

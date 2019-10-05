@@ -70,7 +70,7 @@ While there is no way to explicitly type a string (that is the reason for creati
 * Windows or Non-Windows.
 * File or Directory.
 * Absolute or Relative.
-
+* Resolved or Unresolved.
 
 Windows or Non-Windows
 
